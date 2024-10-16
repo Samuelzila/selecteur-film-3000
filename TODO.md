@@ -1,0 +1,10 @@
+- [ ] Interface filtres
+- [ ] Filtrer les films
+- [ ] Choisir trois films aléatoirement
+- [ ] Interface pour les films
+- [ ] Afficher les films
+  - [ ] Image
+  - [ ] Métadonnées
+  - [ ] Description de OMDb
+  - [ ] Graphiques de popularité
+- [ ] Biaiser l'aléatoire
