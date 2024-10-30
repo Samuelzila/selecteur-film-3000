@@ -9,7 +9,7 @@ class MainApp(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("Sélecteur-Film-3000")
-        self.show_accueil()
+        self.show_Films()
         #super().attributes("-fullscreen", True)
         super().state("zoomed")
         
