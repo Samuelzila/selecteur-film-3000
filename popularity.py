@@ -1,13 +1,17 @@
-import matplotlib.pyplot as plt
 from pytrends.request import TrendReq
-import pandas as pd
 
-pytrends = TrendReq(hl='en-US', tz=300)
 
-kw_list = ["The rooms", "Inception"]
-pytrends.build_payload(kw_list, cat=34, timeframe='all')
+def get_popularity(id1, id2, id3):
+    """
+    Retourne un dataframe qui contient la popularité des films selon Google Trends
+    Il est de la structure: dates, popularité relative 1, 2, 3
+    """
 
-interests = pytrends.interest_over_time()
+    pytrends = TrendReq(hl='en-US', tz=300)
 
-plt.plot(interests.iloc[:, 0:2])
-plt.show()
+    kw_list = ["The rooms", "Inception"]
+    pytrends.build_payload(kw_list, cat=34, timeframe='all')
+
+    interests = pytrends.interest_over_time()
+
+    return interests.iloc[:, 0:3]
