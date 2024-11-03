@@ -62,10 +62,13 @@ def converter_genres(value):
 
 
 bdd = pd.read_csv("./data/title.basics.tsv",
-                  delimiter="\t", converters={"isAdult": converter_bool, "startYear": converter_uint16, "endYear": converter_uint16, "runtimeMinutes": converter_uint16, "genres": converter_genres}, dtype={"tconst": str, "titleType": str, "primaryTitle": str, "originalTitle": str}, usecols=["isAdult", "startYear", "endYear", "genres", "tconst", "titleType", "primaryTitle", "originalTitle", "runtimeMinutes"])
+                  delimiter="\t", converters={"isAdult": converter_bool, "startYear": converter_uint16, "endYear": converter_uint16, "runtimeMinutes": converter_uint16, "genres": converter_genres}, dtype={"tconst": str, "titleType": str, "primaryTitle": str, "originalTitle": str}, usecols=["isAdult", "startYear", "endYear", "genres", "tconst", "titleType", "primaryTitle", "originalTitle", "runtimeMinutes"], index_col="tconst")
 
 # Ignorer films pour adultes
 bdd.drop(bdd[bdd["isAdult"] == True].index, inplace=True)
 
 # Supprimer la colonne maintenant inutile
 bdd.drop("isAdult", axis=1, inplace=True)
+mem = bdd.memory_usage(deep=True)
+print(mem)
+print(f"Sum: {mem.sum():_}")
