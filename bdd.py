@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from double_dictionary import DoubleDict
 
 
 def converter_uint16(value):
@@ -22,12 +23,40 @@ def converter_bool(value):
         return False
 
 
+# Un ensemble de genres, ce qui permettera d'encoder les genres de la bdd et sauver de la mémoire.
+# Ne pas jouer avec directement. Utiliser les fonction associées.
+genres = DoubleDict()
+
+
+def genre_encode(genre):
+    if genre in genres:
+        return genres.get_key(genre)
+    else:
+        key = np.uint8(len(genres))
+        genres.insert(key, genre)
+        return key
+
+
+def genre_decode(genre):
+    if genre in genres:
+        return genres.get(genre)
+    else:
+        raise ValueError("This encoded value has no associated genre.")
+
+
 def converter_genres(value):
     """
     Gestion des genres. Convertir le string en array.
     """
     try:
-        return value.split(",")
+        arr = value.split(",")
+        encoded_arr = []
+        for i in arr:
+            if i == "\\N":
+                continue
+            encoded_arr.append(genre_encode(i))
+        return encoded_arr
+
     except (ValueError, TypeError):
         return []
 
