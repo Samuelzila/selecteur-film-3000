@@ -69,6 +69,3 @@ bdd.drop(bdd[bdd["isAdult"] == True].index, inplace=True)
 
 # Supprimer la colonne maintenant inutile
 bdd.drop("isAdult", axis=1, inplace=True)
-mem = bdd.memory_usage(deep=True)
-print(mem)
-print(f"Sum: {mem.sum():_}")
