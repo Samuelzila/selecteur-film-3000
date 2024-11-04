@@ -4,6 +4,7 @@ from TMDPAPI import TMDB
 from PIL import ImageTk, Image 
 import requests
 from io import BytesIO
+import bdd
 
 requete = TMDB()
 idfilm1 = "tt0120915"
@@ -30,13 +31,13 @@ class ResultatRecherche(ctk.CTkFrame):
         self.add_graphique(requete.get_image("tt0076759"),columnspan=3)
 
         # Information Sections
-        self.add_section("Titre:", ["guerres des étoiles", "interstellar", "j'ai compris!!!"], 1)
-        self.add_section("Titre original:", ["Star Wars", "b", "c"], 2)
-        self.add_section("Année de début:", ["-1000 avjc", "b", "c"], 3)
-        self.add_section("Année de fin:", ["-999 avjc", "b", "c"], 4)
-        self.add_section("Durée:", ["666", "b", "c"], 5)
-        self.add_section("Rating:", ["9/10", "b", "c"], 6)
-        self.add_section("Genre(s):", ["action, comedie, romance", "a,d,e", "b,f,g"], 7)
+        self.add_section("Titre:", [bdd.get_title(idfilm1), bdd.get_title(idfilm3), bdd.get_title(idfilm3)], 1)
+        self.add_section("Titre original:", [bdd.get_originaltitle(idfilm1), bdd.get_originaltitle(idfilm3), bdd.get_originaltitle(idfilm3)], 2)
+        self.add_section("Année de début:", [bdd.get_startYear(idfilm1), bdd.get_startYear(idfilm3), bdd.get_startYear(idfilm3)], 3)
+        self.add_section("Année de fin:", [bdd.get_endYear(idfilm1), bdd.get_endYear(idfilm3), bdd.get_endYear(idfilm3)], 4)
+        self.add_section("Durée:", [bdd.get_runtime(idfilm1), bdd.get_runtime(idfilm3), bdd.get_runtime(idfilm3)], 5)
+        #self.add_section("Rating:", ["9/10", "b", "c"], 6)
+        self.add_section("Genre(s):", [bdd.get_genres(idfilm1), bdd.get_genres(idfilm3), bdd.get_genres(idfilm3)], 7)
 
         #Add Description
         self.add_description(requete.get_desc(idfilm1),1)
