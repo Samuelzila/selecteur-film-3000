@@ -69,3 +69,15 @@ bdd.drop(bdd[bdd["isAdult"] == True].index, inplace=True)
 
 # Supprimer la colonne maintenant inutile
 bdd.drop("isAdult", axis=1, inplace=True)
+
+
+def get_title(tconst):
+    """
+    Obtenir le titre d'un film à partir de son identifiant IMDb.
+    """
+    global bdd
+    title = bdd.at[tconst, "primaryTitle"]
+    return title
+
+
+get_title("tt0120915")
