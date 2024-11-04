@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from accueil import Accueil
-import tkinter as tk # Importer tkinter pour les menus traditionnels
+import tkinter as ttk # Importer tkinter pour les menus traditionnels
 from resultat_recherche import ResultatRecherche
 import numpy as np
 

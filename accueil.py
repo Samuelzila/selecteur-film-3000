@@ -1,66 +1,132 @@
 import customtkinter as ctk
 import tkinter as tk
+from tkinter import ttk
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import tkinter as tk
+from tkinter import ttk
+import customtkinter as ctk
 
-class Accueil(ctk.CTkFrame):
+class Accueil(tk.Frame):
     
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
         self.create_widgets()
+        self.liste_3_genres = []
+        
 
+    def collect_info(self):
+            
+            if not self.entry_annee_max.get().isdigit() or not self.entry_annee_min.get().isdigit() or not self.entry_rating_max.get().isdigit() or not self.entry_rating_min.get().isdigit():
+                self.show_invalid_entry()
+            else:
+                # Collecte des informations entrées par l'utilisateur
+                annee_max = self.entry_rating_min.get()
+                annee_min = self.entry_annee_min.get()
+                rating_max = self.entry_rating_max.get()
+                rating_min = self.entry_rating_min.get()
+                genre = self.choixGenre.get()
+
+                # Afficher les informations dans la console pour vérification
+                print("Année Max :", annee_max)
+                print("Année Min :", annee_min)
+                print("Rating Max :", rating_max)
+                print("Rating Min :", rating_min)
+                print("Genre sélectionné :", genre)
+    
+    def show_invalid_entry(self):
+        ctk.CTkLabel(self, text="Veuillez entrer des valeurs valides.", text_color="red").grid(row=4, column=0, padx=10, pady=10, sticky="w")
+        
+        if self.entry_annee_max.get().isdigit():
+            self.entry_annee_max._bg_color = "white"
+        else:
+            self
+
+        if self.entry_annee_min.get().isdigit():
+            self.entry_annee_min._text_color = "red"
+        else:
+            self.entry_annee_min._bg_color = "white"
+
+        if self.entry_rating_max.get().isdigit():
+            self.entry_rating_max._bg_color = "red"
+        else:
+            self.entry_rating_max._bg_color = "white"
+
+        if self.entry_rating_min.get().isdigit():
+            self.entry_rating_min._fg_color = "red"
+        else:
+            self.entry_rating_min._bg_color = "white"
+    
+    def add_genres(self):
+        self.liste_3_genres.append(self.choixGenre.get())
 
     def create_widgets(self):
-        # Grille
-        self.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
-        # Nom
-        self.name_label = ctk.CTkLabel(self, text="Nom:")
-        self.name_label.grid(row=0, column=0, padx=20, pady=(20, 10), sticky="w")
-        self.name_entry = ctk.CTkEntry(self, placeholder_text="Entrez votre nom")
-        self.name_entry.grid(row=0, column=1, padx=20, pady=(20, 10), sticky="ew")
-        # Email
-        self.email_label = ctk.CTkLabel(self, text="Email:")
-        self.email_label.grid(row=1, column=0, padx=20, pady=(10,10), sticky="w")
-        self.email_entry = ctk.CTkEntry(self, placeholder_text="Entrez votre email")
-        self.email_entry.grid(row=1, column=1, padx=20, pady=(10,10), sticky="ew")
-        # Genre
-        self.gender_label = ctk.CTkLabel(self, text="Genre:")
-        self.gender_label.grid(row=2, column=0, padx=20, pady=(10,10), sticky="w")
-        self.gender_var = tk.StringVar(value="Non spécifié")
-        self.gender_male_rb = ctk.CTkRadioButton(self, text="Homme", variable=self.gender_var,
-        value="Homme")
-        self.gender_male_rb.grid(row=2, column=1, padx=20, pady=(10,10), sticky="w")
-        self.gender_female_rb = ctk.CTkRadioButton(self, text="Femme", variable=self.gender_var,
-        value="Femme")
-        self.gender_female_rb.grid(row=3, column=1, padx=20, pady=(10,10), sticky="w")
-        # Langues parlées
-        self.languages_label = ctk.CTkLabel(self, text="Langues parlées:")
-        self.languages_label.grid(row=4, column=0, padx=20, pady=(10,10), sticky="w")
-        self.languages = ["Français", "Anglais", "Espagnol"]
-        self.language_vars = {lang: tk.BooleanVar() for lang in self.languages}
-        i=5
-        for index, language in enumerate(self.languages):
-            cb = ctk.CTkCheckBox(self, text=language, variable=self.language_vars[language])
-            cb.grid(row=i, column=1, padx=20, pady=(10,10), sticky="w")
-            i+=1
-        # Message
-        self.message_label = ctk.CTkLabel(self, text="Message:")
-        self.message_label.grid(row=8, column=0, padx=20, pady=(10,10), sticky="nw")
-        self.message_text = tk.Text(self, height=5, width=30)
-        self.message_text.grid(row=8, column=1, padx=20, pady=(10,10), sticky="ew")
-        # Bouton de soumission
-        self.submit_button = ctk.CTkButton(self, text="Soumettre", command=self.submit_form)
-        self.submit_button.grid(row=9, column=0, columnspan=2, padx=20, pady=20)
-    def submit_form(self):
-        print("Nom:", self.name_entry.get())
-        print("Email:", self.email_entry.get())
-        print("Genre:", self.gender_var.get())
-        print("Langues:", ', '.join([language for language, var in self.language_vars.items() if var.get()]))
-        print("Message:", self.message_text.get("1.0", tk.END))
+        self.grid(row=0, column=0, padx=80, pady=20, sticky="nsew")
+        
+        # Définir la liste des genres avant de l'utiliser
+        liste_des_genres = ('January', 'February', 'March', 'April', 'May', 
+                            'June', 'July', 'August', 'September', 'October', 
+                            'November', 'December')
 
+        # Variable pour stocker la sélection
+        n = tk.StringVar()
 
-    def Submit_callBack(self):
-        print("button clicked")
-        self.label.configure(text="Vous avez cliqué sur le bouton")
+        # Création de labels et entrées pour les années
+        self.label_annee_max = ctk.CTkLabel(self, text="Année Max:", text_color="black")
+        self.label_annee_max.grid(row=1, column=0, padx=10, pady=5, sticky="w")
+
+        self.entry_annee_max = ctk.CTkEntry(self, placeholder_text="2000")
+        self.entry_annee_max.grid(row=1, column=1, padx=10, pady=5, sticky="w")
+
+        self.label_annee_min = ctk.CTkLabel(self, text="Année Min:", text_color="black")
+        self.label_annee_min.grid(row=2, column=0, padx=10, pady=5, sticky="w")
+
+        self.entry_annee_min = ctk.CTkEntry(self, placeholder_text="2000")
+        self.entry_annee_min.grid(row=2, column=1, padx=10, pady=5, sticky="w")
+
+        # Création de labels et entrées pour les Rating
+        self.label_rating_max = ctk.CTkLabel(self, text="Rating Max:", text_color="black")
+        self.label_rating_max.grid(row=1, column=3, padx=10, pady=5, sticky="w")
+
+        self.entry_rating_max = ctk.CTkEntry(self, placeholder_text="2000")
+        self.entry_rating_max.grid(row=1, column=4, padx=10, pady=5, sticky="w")
+
+        self.label_rating_min = ctk.CTkLabel(self, text="Rating Min:", text_color="black")
+        self.label_rating_min.grid(row=2, column=3, padx=10, pady=5, sticky="w")
+
+        self.entry_rating_min = ctk.CTkEntry(self, placeholder_text="2000")
+        self.entry_rating_min.grid(row=2, column=4, padx=10, pady=5, sticky="w")
+
+        # Bouton pour collecter les informations
+        self.collect_button = ctk.CTkButton(self, text="Collecter",  command=self.collect_info)
+        self.collect_button.grid(row=3, column=3, padx=10, pady=20, sticky="w")
+
+        self.add_Genre = ctk.CTkButton(self, text="ajouter Genre",  command=self.add_genres, fg_color="gray", text_color="white", hover_color="black")
+        self.add_Genre.grid(row=3, column=1, padx=10, pady=20, sticky="w")
+
+        # Création du combobox avec la liste des genres
+        self.choixGenre = ttk.Combobox(self, width=20, textvariable=n)
+        self.choixGenre.grid(row=3, column=0, padx=10, pady=5, sticky="w")
+        self.choixGenre["values"] = liste_des_genres
+        self.choixGenre.set("")  # Valeur spar défaut vide
+
+        # Fonction de recherche pour filtrer les options en fonction de la saisie
+        def recherche_Liste(event):
+            
+            value = event.widget.get()
+            if value == "":
+                self.choixGenre["values"] = liste_des_genres
+            else:
+                # Filtrer les mois en fonction de la saisie
+                data = [item for item in liste_des_genres if value.lower() in item.lower()]
+                self.choixGenre["values"] = data
+
+        # Associer la fonction de recherche au combobox
+        self.choixGenre.bind("<KeyRelease>", recherche_Liste)
+
+        # Configuration des colonnes pour s'assurer que chaque colonne a une taille uniforme
+        self.grid_columnconfigure(0, weight=1, uniform="group1")
+        self.grid_columnconfigure(1, weight=1, uniform="group1")
+
 
