@@ -78,6 +78,3 @@ def get_title(tconst):
     global bdd
     title = bdd.at[tconst, "primaryTitle"]
     return title
-
-
-get_title("tt0120915")
