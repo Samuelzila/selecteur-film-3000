@@ -70,6 +70,12 @@ bdd.drop(bdd[bdd["isAdult"] == True].index, inplace=True)
 # Supprimer la colonne maintenant inutile
 bdd.drop("isAdult", axis=1, inplace=True)
 
+# Garder juste les films
+bdd.drop(bdd[bdd["titleType"] != "movie"].index, inplace=True)
+
+# Supprimer la colonne maintenant inutile
+bdd.drop("titleType", axis=1, inplace=True)
+
 
 def get_title(tconst):
     """
