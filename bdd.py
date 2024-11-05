@@ -76,6 +76,15 @@ bdd.drop(bdd[bdd["titleType"] != "movie"].index, inplace=True)
 # Supprimer la colonne maintenant inutile
 bdd.drop("titleType", axis=1, inplace=True)
 
+# Ajout des scores de films
+ratings = pd.read_csv("./data/title.ratings.tsv", sep="\t", index_col="tconst",
+                      usecols=["tconst", "averageRating"], dtype={"averageRating": np.float16, "tconst": str})
+
+# À ce stade-ci, c'est moins grave de ne pas faire les opérations inplace, car on a moins de films.
+bdd = bdd.join(ratings)
+
+del ratings
+
 
 def get_title(tconst):
     """
@@ -84,3 +93,11 @@ def get_title(tconst):
     global bdd
     title = bdd.at[tconst, "primaryTitle"]
     return title
+
+
+def get_rating(tconst):
+    """
+    Obtenir le score d'un film à partir de son identifiant IMDb.
+    """
+    global bdd
+    return bdd.at[tconst, "averageRating"]
