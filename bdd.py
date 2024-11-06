@@ -61,7 +61,7 @@ def converter_genres(value):
         return []
 
 
-bdd = pd.read_csv("./data/title.basics.tsv",
+bdd = pd.read_csv("./data/title.basics.tsv", nrows=10000,
                   delimiter="\t", converters={"isAdult": converter_bool, "startYear": converter_uint16, "endYear": converter_uint16, "runtimeMinutes": converter_uint16, "genres": converter_genres}, dtype={"tconst": str, "titleType": str, "primaryTitle": str, "originalTitle": str}, usecols=["isAdult", "startYear", "endYear", "genres", "tconst", "titleType", "primaryTitle", "originalTitle", "runtimeMinutes"], index_col="tconst")
 
 # Ignorer films pour adultes
@@ -80,4 +80,3 @@ def get_title(tconst):
     return title
 
 
-get_title("tt0120915")
