@@ -64,11 +64,13 @@ class ResultatRecherche(ctk.CTkScrollableFrame):
 
         button = ctk.CTkButton(
             self, text="Ne plus afficher", command=partial(self.ne_plus_afficher, idfilm1))
+        button.grid(row=10, column=1)
         button = ctk.CTkButton(
             self, text="Ne plus afficher", command=partial(self.ne_plus_afficher, idfilm2))
+        button.grid(row=10, column=2)
         button = ctk.CTkButton(
             self, text="Ne plus afficher", command=partial(self.ne_plus_afficher, idfilm3))
-        button.grid(row=10, column=1)
+        button.grid(row=10, column=3)
 
     def ne_plus_afficher(self, id):
         try:
