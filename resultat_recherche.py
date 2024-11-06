@@ -21,21 +21,16 @@ class ResultatRecherche(ctk.CTkFrame):
         self.create_widgets()
 
     def create_widgets(self):
-        self.grid(row=0, column=0, padx=20, pady=20,
-                  sticky="nsew")  # Main grid layout
+        self.grid(row=0, column=0, padx=20, pady=20,sticky="nsew")  # Main grid layout
 
         # Main Header Label
-        self.label = ctk.CTkLabel(
-            self, text="CTkLabel", fg_color="transparent")
+        self.label = ctk.CTkLabel(self, text="CTkLabel", fg_color="transparent")
         self.label.grid(row=0, column=0, columnspan=4, padx=20, pady=(10, 10))
 
         # Add Image
-        self.add_image(requete.get_image(idfilm1),
-                       row=0, column=1, columnspan=1)
-        self.add_image(requete.get_image(idfilm2),
-                       row=0, column=2, columnspan=1)
-        self.add_image(requete.get_image(idfilm3),
-                       row=0, column=3, columnspan=1)
+        self.add_image(requete.get_image(idfilm1),row=0, column=1, columnspan=1)
+        self.add_image(requete.get_image(idfilm2),row=0, column=2, columnspan=1)
+        self.add_image(requete.get_image(idfilm3),row=0, column=3, columnspan=1)
 
         # Add Graphique
         self.add_graphique(columnspan=3)
@@ -44,9 +39,9 @@ class ResultatRecherche(ctk.CTkFrame):
         self.add_section("Titre:", [bdd.get_title(idfilm1), bdd.get_title(idfilm2), bdd.get_title(idfilm3)], 1)
         self.add_section("Titre original:", [bdd.get_originaltitle(idfilm1), bdd.get_originaltitle(idfilm2), bdd.get_originaltitle(idfilm3)], 2)
         self.add_section("Année de début:", [bdd.get_startYear(idfilm1), bdd.get_startYear(idfilm2), bdd.get_startYear(idfilm3)], 3)
-        self.add_section("Année de fin:", [bdd.get_endYear(idfilm1), bdd.get_endYear(idfilm2), bdd.get_endYear(idfilm3)], 4)
+        self.add_section("Rating:", [bdd.get_rating(idfilm1), bdd.get_rating(idfilm2), bdd.get_rating(idfilm3)], 4)
+        #self.add_section("Année de fin:", [bdd.get_endYear(idfilm1), bdd.get_endYear(idfilm2), bdd.get_endYear(idfilm3)], 4)
         self.add_section("Durée:", [bdd.get_runtime(idfilm1), bdd.get_runtime(idfilm2), bdd.get_runtime(idfilm3)], 5)
-        #self.add_section("Rating:", ["9/10", "b", "c"], 6)
         self.add_section("Genre(s):", [bdd.get_genres(idfilm1), bdd.get_genres(idfilm2), bdd.get_genres(idfilm3)], 7)
 
         # Add Description
@@ -69,8 +64,7 @@ class ResultatRecherche(ctk.CTkFrame):
         label.grid(row=row, column=0, padx=20, pady=(10, 10), sticky="ew")
         for i, value in enumerate(values, start=1):
             value_label = ctk.CTkLabel(self, text=value, wraplength=150)
-            value_label.grid(row=row, column=i, padx=20,
-                             pady=(10, 10), sticky="ew")
+            value_label.grid(row=row, column=i, padx=20,pady=(10, 10), sticky="ew")
 
     def add_image(self, image_url, row, column, columnspan=1):
         """Helper function to add an image to the grid."""
