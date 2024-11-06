@@ -11,4 +11,4 @@ class ResultatRecherche(ctk.CTkFrame):
         self.button.grid(row=0, column=0, pady=(20,10))
         self.label = ctk.CTkLabel(self, text="CTkLabel", fg_color="transparent")# Label
     
-    
+        

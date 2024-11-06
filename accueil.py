@@ -1,7 +1,5 @@
 import customtkinter as ctk
 import pandas as pd
-import tkinter as tk
-from tkinter import ttk
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import tkinter as tk
@@ -10,16 +8,20 @@ import customtkinter as ctk
 import bdd as BDD
 from bdd import bdd
 from bdd import genres
+import json
+import random
 
 class Accueil(tk.Frame):
-
+    
 
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
         self.create_widgets()
-        self.liste_3_genres = []
+        self.liste_genres = []
     
+
+    # Fonctions qui assure que les recherches sont valides -----------------------------
     def range_annee(self, entry):
         if not entry.isdigit():
             return True
@@ -53,40 +55,7 @@ class Accueil(tk.Frame):
     def is_empty(self, entry, entry2, entry3, entry4, entry5):
         if entry == "" or entry2 == "" or entry3 == "" or entry4 == "" or len(entry5) == 0:
             return True
-    def collect_info(self):
-            
-            if self.is_empty(self.entry_annee_max.get(), self.entry_annee_min.get(), self.entry_rating_max.get(), self.entry_rating_min.get(), self.liste_3_genres):
-                ctk.CTkLabel(self, text="Veuillez entrer des valeurs.", text_color="red").grid(row=4, column=0, padx=10, pady=10, sticky="w")
-            else:
-                if  self.range_annee(self.entry_annee_max.get()) or self.range_annee(self.entry_annee_min.get()) or self.range_rating(self.entry_rating_max.get()) or self.range_rating(self.entry_rating_min.get()) or not self.cohérence_rating(int(self.entry_rating_max.get()), int(self.entry_rating_min.get())) or not self.cohérence_annee(int(self.entry_annee_max.get()), int(self.entry_annee_min.get())):
-                    self.show_invalid_entry()
-                else:
-                    # Collecte des informations entrées par l'utilisateur
-                    annee_max = self.entry_annee_max.get()
-                    annee_min = self.entry_annee_min.get()
-                    rating_max = self.entry_rating_max.get()
-                    rating_min = self.entry_rating_min.get()
-                    genre = self.liste_3_genres
-                    
-
-                    # Afficher les informations dans la console pour vérification
-                    print("Année Max :", annee_max)
-                    print("Année Min :", annee_min)
-                    print("Rating Max :", rating_max)
-                    print("Rating Min :", rating_min)
-                    print("Genre sélectionné :", genre)
-                    print(self.Resultat(annee_max, annee_min, rating_max, rating_min, genre))
-    
-    def Resultat(self, annee_max, annee_min, rating_max, rating_min, desired_genres):
-        # Recherche des films parmi la base de données
-    
-        data = bdd[(bdd["genres"].apply(lambda x: any(genre in x for genre in desired_genres)))& (bdd["startYear"] >= int(annee_min)) & (bdd["startYear"] <= int(annee_max))]
-
-        #sélection des 3 films parmi la base de données
-        data = data.sample(3)
-        print(data)
-
-    
+    #donne du feedback en cas d'erreur
     def show_invalid_entry(self):
         ctk.CTkLabel(self, text="Veuillez entrer des valeurs valides.", text_color="red").grid(row=4, column=0, padx=10, pady=10, sticky="w")
         
@@ -116,21 +85,87 @@ class Accueil(tk.Frame):
         else:
             self.entry_rating_min.configure(text_color="red")
 
+    # --------------------------------------------------------------
+    def collect_info(self):
+            
+            # Vérification des informations entrées
+            if self.is_empty(self.entry_annee_max.get(), self.entry_annee_min.get(), self.entry_rating_max.get(), self.entry_rating_min.get(), self.liste_genres):
+                ctk.CTkLabel(self, text="Veuillez entrer des valeurs.", text_color="red").grid(row=4, column=0, padx=10, pady=10, sticky="w")
+            else:
+                #vérification des informations valides
+                if  self.range_annee(self.entry_annee_max.get()) or self.range_annee(self.entry_annee_min.get()) or self.range_rating(self.entry_rating_max.get()) or self.range_rating(self.entry_rating_min.get()) or not self.cohérence_rating(int(self.entry_rating_max.get()), int(self.entry_rating_min.get())) or not self.cohérence_annee(int(self.entry_annee_max.get()), int(self.entry_annee_min.get())):
+                    self.show_invalid_entry()
+                else:
+                    # Collecte des informations entrées par l'utilisateur
+                    annee_max = self.entry_annee_max.get()
+                    annee_min = self.entry_annee_min.get()
+                    rating_max = self.entry_rating_max.get()
+                    rating_min = self.entry_rating_min.get()
+                    genre = self.liste_genres
+                
+                    print(self.Resultat(annee_max, annee_min, rating_max, rating_min, genre))
+                    
+    
+    def Resultat(self, annee_max, annee_min, rating_max, rating_min, desired_genres):
+        # Recherche des films parmi la base de données
+    
+        data = bdd[(bdd["genres"].apply(lambda x: any(genre in x for genre in desired_genres)))& (bdd["startYear"] >= int(annee_min)) & (bdd["startYear"] <= int(annee_max)) & (bdd["averageRating"] <= int(rating_max)) & (bdd["averageRating"] >= int(rating_min))]
+    
+        try :
+            with open("data/blacklist.json") as file:
+                
+                blacklist = json.load(file)
+        except FileNotFoundError:
+            blacklist = []
+        
+        liste_des_films = []
+        nombre_de_film = 3
+        
+        #si la recherche ne renvoie pas 3 films, on ajoute des films au hasard
+        if len(data) < 3:
+            nombre_de_film = len(data)
+            print("nombre de film : ", nombre_de_film)
+            for i in range(0, 3 - nombre_de_film):
+                trouver = False
+                while(not trouver):
+                    idFilm = bdd.sample(1, random_state=random.randint(0, 10000)).index[0]
+        
+                    if idFilm not in blacklist:
+                        blacklist.append(idFilm)
+                        liste_des_films.append(idFilm) 
+                        trouver = True
+        
+
+        #si la recherche renvoie plus de 3 films, on ajoute des films au hasard depuis la recherche
+        print(nombre_de_film)
+        for i in range(0,nombre_de_film):
+            while(True):
+                idFilm = data.sample(1).index[0]
+                if idFilm not in blacklist: 
+                    break
+            blacklist.append(idFilm)
+            liste_des_films.append(idFilm)
+        
+        print(liste_des_films)
+        
+
+    
+    
     
     def add_genres(self):
          
         if self.genres_exist(self.choixGenre.get()):
             print("mauvaise entrée")
-            self.choixGenre.set("")
             self.choixGenre.configure(foreground="red")
         else:
             self.choixGenre.configure(foreground="green")
-            self.liste_3_genres.append(BDD.genre_encode(self.choixGenre.get()))
+            self.liste_genres.append(BDD.genre_encode(self.choixGenre.get()))
             print(self.choixGenre.get())
             print(BDD.genre_encode(self.choixGenre.get()))
-            print(self.liste_3_genres)
+            print(self.liste_genres)
             self.choixGenre.set("")
 
+    #visuel de la recherhe
     def create_widgets(self):
         self.grid(row=0, column=0, padx=80, pady=20, sticky="nsew")
         
