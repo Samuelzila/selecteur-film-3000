@@ -10,15 +10,16 @@ class MainApp(ctk.CTk):
         super().__init__()
         self.title("Sélecteur-Film-3000")
         self.show_Films()
-        # super().attributes("-fullscreen", True)
 
     def show_accueil(self):
         self.clear_main_frame()
         self.accueil = Accueil(master=self)
+        self.accueil.pack(fill="both", expand=True)  
 
     def show_Films(self):
         self.clear_main_frame()
         self.resultat_recherche = ResultatRecherche(self)
+        self.resultat_recherche.pack(fill="both", expand=True)
 
     def clear_main_frame(self):
         for widget in self.winfo_children():
