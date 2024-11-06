@@ -16,7 +16,8 @@ class MainApp(ctk.CTk):
 
     def show_Films(self):
         self.clear_main_frame()
-        self.resultat_recherche = ResultatRecherche(self)
+        self.resultat_recherche = ResultatRecherche(
+            master=self, width=1280, height=720, corner_radius=0, fg_color="transparent")
         self.resultat_recherche.pack(fill="both", expand=True)
 
     def clear_main_frame(self):

@@ -17,9 +17,9 @@ idfilm2 = "tt0121765"
 idfilm3 = "tt0121766"
 
 
-class ResultatRecherche(ctk.CTkFrame):
-    def __init__(self, master=None):
-        super().__init__(master)
+class ResultatRecherche(ctk.CTkScrollableFrame):
+    def __init__(self, master=None, **kwargs):
+        super().__init__(master, **kwargs)
         self.create_widgets()
 
     def create_widgets(self):
