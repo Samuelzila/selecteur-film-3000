@@ -88,13 +88,14 @@ class ResultatRecherche(ctk.CTkFrame):
     def add_graphique(self, columnspan):
         data = popularity.get_popularity(idfilm1, idfilm2, idfilm3)
 
-        plt.figure(figsize=(10, 3))
+        if data is not None:
+            plt.figure(figsize=(10, 3))
 
-        for name, series in data.items():
-            plt.plot(data.index, series, label=name)
-        plt.legend(loc="upper left")
-        # Intégrer le graphique dans tkinter
-        self.canvas = FigureCanvasTkAgg(plt.gcf(), master=self)
-        self.canvas.draw()
-        self.canvas.get_tk_widget().grid(
-            row=10, column=1, pady=(10, 10), columnspan=columnspan)
+            for name, series in data.items():
+                plt.plot(data.index, series, label=name)
+            plt.legend(loc="upper left")
+            # Intégrer le graphique dans tkinter
+            self.canvas = FigureCanvasTkAgg(plt.gcf(), master=self)
+            self.canvas.draw()
+            self.canvas.get_tk_widget().grid(
+                row=10, column=1, pady=(10, 10), columnspan=columnspan)
