@@ -1,12 +1,6 @@
 import customtkinter as ctk
-import pandas as pd
 import tkinter as tk
 from tkinter import ttk
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import tkinter as tk
-from tkinter import ttk
-import customtkinter as ctk
 import bdd as BDD
 from bdd import bdd
 from bdd import genres
@@ -79,6 +73,9 @@ class Accueil(tk.Frame):
                 print("Genre sélectionné :", genre)
                 print(self.Resultat(annee_max, annee_min,
                       rating_max, rating_min, genre))
+
+                # Changer de fenêtre
+                self.master.show_Films()
 
     def Resultat(self, annee_max, annee_min, rating_max, rating_min, desired_genres):
         # Recherche des films parmi la base de données

@@ -7,7 +7,8 @@ class MainApp(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("Sélecteur-Film-3000")
-        self.show_Films()
+        self.geometry("1280x720")
+        self.show_accueil()
 
     def show_accueil(self):
         self.clear_main_frame()
