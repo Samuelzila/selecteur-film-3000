@@ -41,13 +41,19 @@ class ResultatRecherche(ctk.CTkFrame):
         self.add_graphique(columnspan=3)
 
         # Information Sections
-        self.add_section("Titre:", [bdd.get_title(idfilm1), bdd.get_title(idfilm2), bdd.get_title(idfilm3)], 1)
-        self.add_section("Titre original:", [bdd.get_originaltitle(idfilm1), bdd.get_originaltitle(idfilm2), bdd.get_originaltitle(idfilm3)], 2)
-        self.add_section("Année de début:", [bdd.get_startYear(idfilm1), bdd.get_startYear(idfilm2), bdd.get_startYear(idfilm3)], 3)
-        self.add_section("Année de fin:", [bdd.get_endYear(idfilm1), bdd.get_endYear(idfilm2), bdd.get_endYear(idfilm3)], 4)
-        self.add_section("Durée:", [bdd.get_runtime(idfilm1), bdd.get_runtime(idfilm2), bdd.get_runtime(idfilm3)], 5)
-        #self.add_section("Rating:", ["9/10", "b", "c"], 6)
-        self.add_section("Genre(s):", [bdd.get_genres(idfilm1), bdd.get_genres(idfilm2), bdd.get_genres(idfilm3)], 7)
+        self.add_section("Titre:", [bdd.get_title(
+            idfilm1), bdd.get_title(idfilm2), bdd.get_title(idfilm3)], 1)
+        self.add_section("Titre original:", [bdd.get_originaltitle(
+            idfilm1), bdd.get_originaltitle(idfilm2), bdd.get_originaltitle(idfilm3)], 2)
+        self.add_section("Année de début:", [bdd.get_startYear(
+            idfilm1), bdd.get_startYear(idfilm2), bdd.get_startYear(idfilm3)], 3)
+        self.add_section("Année de fin:", [bdd.get_endYear(
+            idfilm1), bdd.get_endYear(idfilm2), bdd.get_endYear(idfilm3)], 4)
+        self.add_section("Durée:", [bdd.get_runtime(
+            idfilm1), bdd.get_runtime(idfilm2), bdd.get_runtime(idfilm3)], 5)
+        # self.add_section("Rating:", ["9/10", "b", "c"], 6)
+        self.add_section("Genre(s):", [bdd.get_genres(
+            idfilm1), bdd.get_genres(idfilm2), bdd.get_genres(idfilm3)], 7)
 
         # Add Description
         self.add_description(requete.get_desc(idfilm1), 1)
@@ -58,10 +64,12 @@ class ResultatRecherche(ctk.CTkFrame):
         """Helper function to add a description to the grid."""
         if requete:
             label = ctk.CTkLabel(self, text=label_text, wraplength=200)
-            label.grid(row=9, column=column, padx=20, pady=(10, 10), sticky="ew")
+            label.grid(row=9, column=column, padx=20,
+                       pady=(10, 10), sticky="ew")
         else:
             label = ctk.CTkLabel(self, text="", wraplength=200)
-            label.grid(row=9, column=column, padx=20, pady=(10, 10), sticky="ew")
+            label.grid(row=9, column=column, padx=20,
+                       pady=(10, 10), sticky="ew")
 
     def add_section(self, label_text, values, row):
         """Helper function to add a row section to the grid."""
@@ -78,34 +86,38 @@ class ResultatRecherche(ctk.CTkFrame):
             response = requests.get(image_url)
             if response is not None:
                 image = Image.open(BytesIO(response.content))
-                image = image.resize((200, 150))  # Adjust the size as needed
+                image = image.resize((120, 150))  # Adjust the size as needed
                 self.photo = ImageTk.PhotoImage(image)
                 # Use text="" to hide text
                 image_label = ctk.CTkLabel(self, image=self.photo, text="")
-                image_label.grid(row=row, column=column, columnspan=columnspan, padx=20, pady=20, sticky="ew")
+                image_label.grid(
+                    row=row, column=column, columnspan=columnspan, padx=20, pady=20, sticky="ew")
             else:
-                self.add_no_image_available(row,column,columnspan)
+                self.add_no_image_available(row, column, columnspan)
         else:
-            self.add_no_image_available(row,column,columnspan)
-
+            self.add_no_image_available(row, column, columnspan)
 
     def add_graphique(self, columnspan):
         """Helper function to add a chart to the grid."""
         data = popularity.get_popularity(idfilm1, idfilm2, idfilm3)
 
-        for name, series in data.items():
-            plt.plot(data.index, series, label=name)
-        plt.legend(loc="upper left")
-        # Intégrer le graphique dans tkinter
-        self.canvas = FigureCanvasTkAgg(plt.gcf(), master=self)
-        self.canvas.draw()
-        self.canvas.get_tk_widget().grid(
-            row=10, column=1, pady=(10, 10), columnspan=columnspan)
-        
-    def add_no_image_available(self,row,column,columnspan):
+        if data is not None:
+            plt.figure(figsize=(10, 3))
+
+            for name, series in data.items():
+                plt.plot(data.index, series, label=name)
+            plt.legend(loc="upper left")
+            # Intégrer le graphique dans tkinter
+            self.canvas = FigureCanvasTkAgg(plt.gcf(), master=self)
+            self.canvas.draw()
+            self.canvas.get_tk_widget().grid(
+                row=10, column=1, pady=(10, 10), columnspan=columnspan)
+
+    def add_no_image_available(self, row, column, columnspan):
         image = Image.open("no_image_available.jpg")
-        image = image.resize((200, 150))  # Adjust the size as needed
+        image = image.resize((120, 150))  # Adjust the size as needed
         self.photo = ImageTk.PhotoImage(image)
         # Use text="" to hide text
         image_label = ctk.CTkLabel(self, image=self.photo, text="")
-        image_label.grid(row=row, column=column, columnspan=columnspan, padx=20, pady=20, sticky="ew")
+        image_label.grid(row=row, column=column,
+                         columnspan=columnspan, padx=20, pady=20, sticky="ew")
