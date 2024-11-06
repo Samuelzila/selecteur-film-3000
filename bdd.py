@@ -95,6 +95,56 @@ def get_title(tconst):
     return title
 
 
+def get_originaltitle(tconst):
+    """
+    Obtenir le titre original d'un film à partir de son identifiant IMDb.
+    """
+    global bdd
+    return bdd.at[tconst, "originalTitle"]
+
+
+def get_startYear(tconst):
+    """
+    Obtenir l'année de départ d'un film à partir de son identifiant IMDb.
+    """
+    global bdd
+    if not np.isnan(bdd.at[tconst, "startYear"]):
+        return int(bdd.at[tconst, "startYear"])
+    else:
+        return np.nan
+
+
+def get_endYear(tconst):
+    """
+    Obtenir l'année de fin d'un film à partir de son identifiant IMDb.
+    """
+    global bdd
+    if not np.isnan(bdd.at[tconst, "endYear"]):
+        return int(bdd.at[tconst, "endYear"])
+    else:
+        return np.nan
+
+
+def get_runtime(tconst):
+    """
+    Obtenir la durée d'un film à partir de son identifiant IMDb.
+    """
+    global bdd
+    return int(bdd.at[tconst, "runtimeMinutes"])
+
+
+def get_genres(tconst):
+    """
+    Obtenir le genre d'un film à partir de son identifiant IMDb.
+    """
+    global bdd
+    genres = bdd.at[tconst, "genres"]
+    liste = []
+    for i in genres:
+        liste.append(genre_decode(i))
+    return liste
+
+
 def get_rating(tconst):
     """
     Obtenir le score d'un film à partir de son identifiant IMDb.

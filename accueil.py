@@ -63,4 +63,3 @@ class Accueil(ctk.CTkFrame):
     def Submit_callBack(self):
         print("button clicked")
         self.label.configure(text="Vous avez cliqué sur le bouton")
-
