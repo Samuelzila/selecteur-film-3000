@@ -41,13 +41,19 @@ class ResultatRecherche(ctk.CTkFrame):
         self.add_graphique(columnspan=3)
 
         # Information Sections
-        self.add_section("Titre:", [bdd.get_title(idfilm1), bdd.get_title(idfilm3), bdd.get_title(idfilm3)], 1)
-        self.add_section("Titre original:", [bdd.get_originaltitle(idfilm1), bdd.get_originaltitle(idfilm3), bdd.get_originaltitle(idfilm3)], 2)
-        self.add_section("Année de début:", [bdd.get_startYear(idfilm1), bdd.get_startYear(idfilm3), bdd.get_startYear(idfilm3)], 3)
-        self.add_section("Année de fin:", [bdd.get_endYear(idfilm1), bdd.get_endYear(idfilm3), bdd.get_endYear(idfilm3)], 4)
-        self.add_section("Durée:", [bdd.get_runtime(idfilm1), bdd.get_runtime(idfilm3), bdd.get_runtime(idfilm3)], 5)
-        #self.add_section("Rating:", ["9/10", "b", "c"], 6)
-        self.add_section("Genre(s):", [bdd.get_genres(idfilm1), bdd.get_genres(idfilm3), bdd.get_genres(idfilm3)], 7)
+        self.add_section("Titre:", [bdd.get_title(
+            idfilm1), bdd.get_title(idfilm3), bdd.get_title(idfilm3)], 1)
+        self.add_section("Titre original:", [bdd.get_originaltitle(
+            idfilm1), bdd.get_originaltitle(idfilm3), bdd.get_originaltitle(idfilm3)], 2)
+        self.add_section("Année de début:", [bdd.get_startYear(
+            idfilm1), bdd.get_startYear(idfilm3), bdd.get_startYear(idfilm3)], 3)
+        self.add_section("Année de fin:", [bdd.get_endYear(
+            idfilm1), bdd.get_endYear(idfilm3), bdd.get_endYear(idfilm3)], 4)
+        self.add_section("Durée:", [bdd.get_runtime(
+            idfilm1), bdd.get_runtime(idfilm3), bdd.get_runtime(idfilm3)], 5)
+        # self.add_section("Rating:", ["9/10", "b", "c"], 6)
+        self.add_section("Genre(s):", [bdd.get_genres(
+            idfilm1), bdd.get_genres(idfilm3), bdd.get_genres(idfilm3)], 7)
 
         # Add Description
         self.add_description(requete.get_desc(idfilm1), 1)
@@ -71,7 +77,7 @@ class ResultatRecherche(ctk.CTkFrame):
         """Helper function to add an image from a URL to the grid."""
         response = requests.get(image_url)
         image = Image.open(BytesIO(response.content))
-        image = image.resize((200, 150))  # Adjust the size as needed
+        image = image.resize((120, 180))  # Adjust the size as needed
         self.photo = ImageTk.PhotoImage(image)
 
         # Use text="" to hide text
@@ -81,6 +87,8 @@ class ResultatRecherche(ctk.CTkFrame):
 
     def add_graphique(self, columnspan):
         data = popularity.get_popularity(idfilm1, idfilm2, idfilm3)
+
+        plt.figure(figsize=(10, 3))
 
         for name, series in data.items():
             plt.plot(data.index, series, label=name)
