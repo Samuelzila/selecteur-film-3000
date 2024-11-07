@@ -4,6 +4,7 @@ from tkinter import ttk
 import bdd as BDD
 from bdd import bdd
 from bdd import genres
+import datetime
 
 
 class Accueil(tk.Frame):
@@ -71,13 +72,14 @@ class Accueil(tk.Frame):
                 print("Rating Max :", rating_max)
                 print("Rating Min :", rating_min)
                 print("Genre sélectionné :", genre)
-                print(self.Resultat(annee_max, annee_min,
-                      rating_max, rating_min, genre))
+                resultats = self.Resultat(annee_max, annee_min,
+                                          rating_max, rating_min, genre)
+                print(resultats)
 
                 # Changer de fenêtre
-                self.master.show_Films()
+                self.master.show_Films(tuple(resultats.index))
 
-    def Resultat(self, annee_max, annee_min, rating_max, rating_min, desired_genres):
+    def Resultat(self, annee_max=datetime.datetime.now().year, annee_min=1900, rating_max=10, rating_min=0, desired_genres=[]):
         # Recherche des films parmi la base de données
 
         data = bdd[(bdd["genres"].apply(lambda x: any(genre in x for genre in desired_genres))) & (
@@ -86,6 +88,7 @@ class Accueil(tk.Frame):
         # sélection des 3 films parmi la base de données
         data = data.sample(3)
         print(data)
+        return data
 
     def show_invalid_entry(self):
         ctk.CTkLabel(self, text="Veuillez entrer des valeurs valides.", text_color="red").grid(

@@ -12,14 +12,12 @@ from functools import partial
 import json
 
 requete = TMDB()
-idfilm1 = "tt0120915"
-idfilm2 = "tt0121765"
-idfilm3 = "tt0121766"
 
 
 class ResultatRecherche(ctk.CTkScrollableFrame):
-    def __init__(self, master=None, **kwargs):
+    def __init__(self, idfilms, master=None, **kwargs):
         super().__init__(master, **kwargs)
+        self.idfilms = idfilms
         self.create_widgets()
 
     def create_widgets(self):
@@ -32,11 +30,11 @@ class ResultatRecherche(ctk.CTkScrollableFrame):
         self.label.grid(row=0, column=0, columnspan=4, padx=20, pady=(10, 10))
 
         # Add Image
-        self.add_image(requete.get_image(idfilm1),
+        self.add_image(requete.get_image(self.idfilms[0]),
                        row=0, column=1, columnspan=1)
-        self.add_image(requete.get_image(idfilm2),
+        self.add_image(requete.get_image(self.idfilms[1]),
                        row=0, column=2, columnspan=1)
-        self.add_image(requete.get_image(idfilm3),
+        self.add_image(requete.get_image(self.idfilms[2]),
                        row=0, column=3, columnspan=1)
 
         # Add Graphique
@@ -44,32 +42,32 @@ class ResultatRecherche(ctk.CTkScrollableFrame):
 
         # Information Sections
         self.add_section("Titre:", [bdd.get_title(
-            idfilm1), bdd.get_title(idfilm2), bdd.get_title(idfilm3)], 1)
+            self.idfilms[0]), bdd.get_title(self.idfilms[1]), bdd.get_title(self.idfilms[2])], 1)
         self.add_section("Titre original:", [bdd.get_originaltitle(
-            idfilm1), bdd.get_originaltitle(idfilm2), bdd.get_originaltitle(idfilm3)], 2)
+            self.idfilms[0]), bdd.get_originaltitle(self.idfilms[1]), bdd.get_originaltitle(self.idfilms[2])], 2)
         self.add_section("Année de début:", [bdd.get_startYear(
-            idfilm1), bdd.get_startYear(idfilm2), bdd.get_startYear(idfilm3)], 3)
+            self.idfilms[0]), bdd.get_startYear(self.idfilms[1]), bdd.get_startYear(self.idfilms[2])], 3)
         self.add_section("Rating:", [bdd.get_rating(
-            idfilm1), bdd.get_rating(idfilm2), bdd.get_rating(idfilm3)], 4)
+            self.idfilms[0]), bdd.get_rating(self.idfilms[1]), bdd.get_rating(self.idfilms[2])], 4)
         # self.add_section("Année de fin:", [bdd.get_endYear(idfilm1), bdd.get_endYear(idfilm2), bdd.get_endYear(idfilm3)], 4)
         self.add_section("Durée:", [bdd.get_runtime(
-            idfilm1), bdd.get_runtime(idfilm2), bdd.get_runtime(idfilm3)], 5)
+            self.idfilms[0]), bdd.get_runtime(self.idfilms[1]), bdd.get_runtime(self.idfilms[2])], 5)
         self.add_section("Genre(s):", [bdd.get_genres(
-            idfilm1), bdd.get_genres(idfilm2), bdd.get_genres(idfilm3)], 7)
+            self.idfilms[0]), bdd.get_genres(self.idfilms[1]), bdd.get_genres(self.idfilms[2])], 7)
 
         # Add Description
-        self.add_description(requete.get_desc(idfilm1), 1)
-        self.add_description(requete.get_desc(idfilm2), 2)
-        self.add_description(requete.get_desc(idfilm3), 3)
+        self.add_description(requete.get_desc(self.idfilms[0]), 1)
+        self.add_description(requete.get_desc(self.idfilms[1]), 2)
+        self.add_description(requete.get_desc(self.idfilms[2]), 3)
 
         button = ctk.CTkButton(
-            self, text="Ne plus afficher", command=partial(self.ne_plus_afficher, idfilm1))
+            self, text="Ne plus afficher", command=partial(self.ne_plus_afficher, self.idfilms[0]))
         button.grid(row=10, column=1)
         button = ctk.CTkButton(
-            self, text="Ne plus afficher", command=partial(self.ne_plus_afficher, idfilm2))
+            self, text="Ne plus afficher", command=partial(self.ne_plus_afficher, self.idfilms[1]))
         button.grid(row=10, column=2)
         button = ctk.CTkButton(
-            self, text="Ne plus afficher", command=partial(self.ne_plus_afficher, idfilm3))
+            self, text="Ne plus afficher", command=partial(self.ne_plus_afficher, self.idfilms[2]))
         button.grid(row=10, column=3)
 
     def ne_plus_afficher(self, id):
@@ -124,7 +122,8 @@ class ResultatRecherche(ctk.CTkScrollableFrame):
 
     def add_graphique(self, columnspan):
         """Helper function to add a chart to the grid."""
-        data = popularity.get_popularity(idfilm1, idfilm2, idfilm3)
+        data = popularity.get_popularity(
+            self.idfilms[0], self.idfilms[1], self.idfilms[2])
 
         if data is not None:
             plt.figure(figsize=(10, 3))
