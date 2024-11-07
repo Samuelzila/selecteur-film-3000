@@ -107,14 +107,18 @@ class ResultatRecherche(ctk.CTkScrollableFrame):
         """Helper function to add an image to the grid."""
         if requete:
             if image_url is not None:
-                response = requests.get(image_url)
-                image = Image.open(BytesIO(response.content))
-                image = image.resize((120, 150))  # Adjust the size as needed
-                self.photo = ImageTk.PhotoImage(image)
-                # Use text="" to hide text
-                image_label = ctk.CTkLabel(self, image=self.photo, text="")
-                image_label.grid(
-                    row=row, column=column, columnspan=columnspan, padx=20, pady=20, sticky="ew")
+                try:
+                    response = requests.get(image_url)
+                    image = Image.open(BytesIO(response.content))
+                    # Adjust the size as needed
+                    image = image.resize((120, 150))
+                    self.photo = ImageTk.PhotoImage(image)
+                    # Use text="" to hide text
+                    image_label = ctk.CTkLabel(self, image=self.photo, text="")
+                    image_label.grid(
+                        row=row, column=column, columnspan=columnspan, padx=20, pady=20, sticky="ew")
+                except Exception:
+                    self.add_no_image_available(row, column, columnspan)
             else:
                 self.add_no_image_available(row, column, columnspan)
         else:
