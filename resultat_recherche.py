@@ -106,8 +106,8 @@ class ResultatRecherche(ctk.CTkScrollableFrame):
     def add_image(self, image_url, row, column, columnspan=1):
         """Helper function to add an image to the grid."""
         if requete:
-            response = requests.get(image_url)
-            if response is not None:
+            if image_url is not None:
+                response = requests.get(image_url)
                 image = Image.open(BytesIO(response.content))
                 image = image.resize((120, 150))  # Adjust the size as needed
                 self.photo = ImageTk.PhotoImage(image)
