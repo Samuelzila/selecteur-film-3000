@@ -27,41 +27,45 @@ class Accueil(tk.Frame):
             return True
         if int(entry) < 1900 or int(entry) > 2025:
             return True
-        
+
     def genres_exist(self, entry):
         if entry not in genres:
             return True
         else:
             return False
+
     def range_rating(self, entry):
         if not entry.isdigit():
             return True
         if int(entry) < 0 or int(entry) > 5:
             return True
-    
+
     def cohérence_rating(self, entry1, entry2):
         if entry1 >= entry2:
             print(entry1, entry2)
             return True
         else:
             return False
-    
+
     def cohérence_annee(self, entry1, entry2):
         if entry1 >= entry2:
             return True
         else:
             return False
-    
+
     def is_empty(self, entry, entry2, entry3, entry4, entry5):
         if entry == "" or entry2 == "" or entry3 == "" or entry4 == "" or len(entry5) == 0:
             return True
     #donne du feedback en cas d'erreur
     def show_invalid_entry(self):
-        ctk.CTkLabel(self, text="Veuillez entrer des valeurs valides.", text_color="red").grid(row=4, column=0, padx=10, pady=10, sticky="w")
-        
-        cohérence_annees = self.cohérence_annee(int(self.entry_annee_max.get()), int(self.entry_annee_min.get()))
+        ctk.CTkLabel(self, text="Veuillez entrer des valeurs valides.", text_color="red").grid(
+            row=4, column=0, padx=10, pady=10, sticky="w")
+
+        cohérence_annees = self.cohérence_annee(
+            int(self.entry_annee_max.get()), int(self.entry_annee_min.get()))
         print(cohérence_annees)
-        cohérence_rating = self.cohérence_rating(int(self.entry_rating_max.get()), int(self.entry_rating_min.get()))
+        cohérence_rating = self.cohérence_rating(
+            int(self.entry_rating_max.get()), int(self.entry_rating_min.get()))
         print(cohérence_rating)
         genres_not_exist = self.genres_exist(self.choixGenre.get())
 
@@ -153,7 +157,7 @@ class Accueil(tk.Frame):
     
     
     def add_genres(self):
-         
+
         if self.genres_exist(self.choixGenre.get()):
             print("mauvaise entrée")
             self.choixGenre.configure(foreground="red")
@@ -168,7 +172,7 @@ class Accueil(tk.Frame):
     #visuel de la recherhe
     def create_widgets(self):
         self.grid(row=0, column=0, padx=80, pady=20, sticky="nsew")
-        
+
         # Définir la liste des genres avant de l'utiliser
         liste_des_genres = list(genres.value_to_key.keys())
 
@@ -176,39 +180,46 @@ class Accueil(tk.Frame):
         n = tk.StringVar()
 
         # Création de labels et entrées pour les années
-        self.label_annee_max = ctk.CTkLabel(self, text="Année Max:", text_color="black")
+        self.label_annee_max = ctk.CTkLabel(
+            self, text="Année Max:", text_color="black")
         self.label_annee_max.grid(row=1, column=0, padx=10, pady=5, sticky="w")
-        
-        
 
         self.entry_annee_max = ctk.CTkEntry(self, placeholder_text="2000")
         self.entry_annee_max.grid(row=1, column=1, padx=10, pady=5, sticky="w")
 
-       
-        self.label_annee_min = ctk.CTkLabel(self, text="Année Min:", text_color="black")
+        self.label_annee_min = ctk.CTkLabel(
+            self, text="Année Min:", text_color="black")
         self.label_annee_min.grid(row=2, column=0, padx=10, pady=5, sticky="w")
 
         self.entry_annee_min = ctk.CTkEntry(self, placeholder_text="2000")
         self.entry_annee_min.grid(row=2, column=1, padx=10, pady=5, sticky="w")
 
         # Création de labels et entrées pour les Rating
-        self.label_rating_max = ctk.CTkLabel(self, text="Rating Max:", text_color="black")
-        self.label_rating_max.grid(row=1, column=3, padx=10, pady=5, sticky="w")
+        self.label_rating_max = ctk.CTkLabel(
+            self, text="Rating Max:", text_color="black")
+        self.label_rating_max.grid(
+            row=1, column=3, padx=10, pady=5, sticky="w")
 
         self.entry_rating_max = ctk.CTkEntry(self, placeholder_text="2000")
-        self.entry_rating_max.grid(row=1, column=4, padx=10, pady=5, sticky="w")
+        self.entry_rating_max.grid(
+            row=1, column=4, padx=10, pady=5, sticky="w")
 
-        self.label_rating_min = ctk.CTkLabel(self, text="Rating Min:", text_color="black")
-        self.label_rating_min.grid(row=2, column=3, padx=10, pady=5, sticky="w")
+        self.label_rating_min = ctk.CTkLabel(
+            self, text="Rating Min:", text_color="black")
+        self.label_rating_min.grid(
+            row=2, column=3, padx=10, pady=5, sticky="w")
 
         self.entry_rating_min = ctk.CTkEntry(self, placeholder_text="2000")
-        self.entry_rating_min.grid(row=2, column=4, padx=10, pady=5, sticky="w")
+        self.entry_rating_min.grid(
+            row=2, column=4, padx=10, pady=5, sticky="w")
 
         # Bouton pour collecter les informations
-        self.collect_button = ctk.CTkButton(self, text="Collecter",  command=self.collect_info)
+        self.collect_button = ctk.CTkButton(
+            self, text="Collecter",  command=self.collect_info)
         self.collect_button.grid(row=3, column=3, padx=10, pady=20, sticky="w")
 
-        self.add_Genre = ctk.CTkButton(self, text="ajouter Genre",  command=self.add_genres, fg_color="gray", text_color="white", hover_color="black")
+        self.add_Genre = ctk.CTkButton(self, text="ajouter Genre",  command=self.add_genres,
+                                       fg_color="gray", text_color="white", hover_color="black")
         self.add_Genre.grid(row=3, column=1, padx=10, pady=20, sticky="w")
 
         # Création du combobox avec la liste des genres
@@ -219,13 +230,14 @@ class Accueil(tk.Frame):
 
         # Fonction de recherche pour filtrer les options en fonction de la saisie
         def recherche_Liste(event):
-            
+
             value = event.widget.get()
             if value == "":
                 self.choixGenre["values"] = liste_des_genres
             else:
                 # Filtrer les mois en fonction de la saisie
-                data = [item for item in liste_des_genres if value.lower() in item.lower()]
+                data = [item for item in liste_des_genres if value.lower()
+                        in item.lower()]
                 self.choixGenre["values"] = data
 
         # Associer la fonction de recherche au combobox
@@ -234,5 +246,3 @@ class Accueil(tk.Frame):
         # Configuration des colonnes pour s'assurer que chaque colonne a une taille uniforme
         self.grid_columnconfigure(0, weight=1, uniform="group1")
         self.grid_columnconfigure(1, weight=1, uniform="group1")
-
-
