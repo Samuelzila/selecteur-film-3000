@@ -1,18 +1,15 @@
 import customtkinter as ctk
-import pandas as pd
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import tkinter as tk
 from tkinter import ttk
-import customtkinter as ctk
 import bdd as BDD
 from bdd import bdd
 from bdd import genres
+import datetime
+
 import json
 import random
 
 class Accueil(tk.Frame):
-    
 
     def __init__(self, master=None):
         super().__init__(master)
@@ -106,8 +103,9 @@ class Accueil(tk.Frame):
                     rating_max = self.entry_rating_max.get()
                     rating_min = self.entry_rating_min.get()
                     genre = self.liste_genres
-                
-                    print(self.Resultat(annee_max, annee_min, rating_max, rating_min, genre))
+
+                    # Changer de fenêtre
+                    self.master.show_Films(tuple(self.Resultat(annee_max, annee_min, rating_max, rating_min, genre)))
                     
     
     def Resultat(self, annee_max, annee_min, rating_max, rating_min, desired_genres):
@@ -150,7 +148,7 @@ class Accueil(tk.Frame):
             blacklist.append(idFilm)
             liste_des_films.append(idFilm)
         
-        print(liste_des_films)
+        return liste_des_films
         
 
     
