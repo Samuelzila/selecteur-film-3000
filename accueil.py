@@ -18,7 +18,7 @@ class Accueil(tk.Frame):
     def range_annee(self, entry):
         if not entry.isdigit():
             return True
-        if int(entry) < 1900 or int(entry) > 2025:
+        if int(entry) < 1900 or int(entry) > datetime.datetime.now().year + 5:
             return True
 
     def genres_exist(self, entry):

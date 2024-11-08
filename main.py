@@ -11,11 +11,17 @@ class MainApp(ctk.CTk):
         self.show_accueil()
 
     def show_accueil(self):
+        """
+        La page d'accueil, où les filtres sont.
+        """
         self.clear_main_frame()
         self.accueil = Accueil(master=self)
         self.accueil.pack(fill="both", expand=True)
 
     def show_Films(self, idfilms):
+        """
+        L'affichage des trois films résultants.
+        """
         self.clear_main_frame()
         self.resultat_recherche = ResultatRecherche(idfilms,
                                                     master=self, width=1280, height=720, corner_radius=0, fg_color="transparent")

@@ -14,7 +14,7 @@ class TMDB:
 
     def get_desc(self, imdb_id):
         """
-        Obtenir la description d'un film à partir de son identifiant unique iMDB
+        Obtenir la description d'un film à partir de son identifiant unique IMDb
         """
         try:
             resp = requests.get(
@@ -25,7 +25,8 @@ class TMDB:
 
     def get_image(self, imdb_id):
         """
-        Obtenir le lien de l'image d'un film à partir de son id iMDB
+        Obtenir le lien de l'image d'un film à partir de son id IMDb
+        Retourne None s'il y a une erreur.
         """
         try:
             resp = requests.get(
@@ -37,7 +38,7 @@ class TMDB:
 
     def __bool__(self):
         """
-        Retourne si le programme a pu lire le .env
+        Retourne si la connection à l'API marche.
         """
         try:
             resp = requests.get(

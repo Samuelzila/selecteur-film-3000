@@ -71,6 +71,9 @@ class ResultatRecherche(ctk.CTkScrollableFrame):
         button.grid(row=10, column=3)
 
     def ne_plus_afficher(self, id):
+        """
+        Ajouter un film dans la blacklist.
+        """
         try:
             file = open("./data/blacklist.json")
             blacklist = json.load(file)
@@ -142,6 +145,9 @@ class ResultatRecherche(ctk.CTkScrollableFrame):
                 row=11, column=1, pady=(10, 10), columnspan=columnspan)
 
     def add_no_image_available(self, row, column, columnspan):
+        """
+        Image par défaut si aucune image n'a pue être trouvée.
+        """
         image = Image.open("no_image_available.jpg")
         image = image.resize((120, 150))  # Adjust the size as needed
         self.photo = ImageTk.PhotoImage(image)
