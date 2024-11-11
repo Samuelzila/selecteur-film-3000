@@ -47,13 +47,13 @@ class ResultatRecherche(ctk.CTkScrollableFrame):
             self.idfilms[0]), bdd.get_originaltitle(self.idfilms[1]), bdd.get_originaltitle(self.idfilms[2])], 2)
         self.add_section("Année de début:", [bdd.get_startYear(
             self.idfilms[0]), bdd.get_startYear(self.idfilms[1]), bdd.get_startYear(self.idfilms[2])], 3)
-        self.add_section("Rating:", [bdd.get_rating(
+        self.add_section("Rating (sur 10):", [bdd.get_rating(
             self.idfilms[0]), bdd.get_rating(self.idfilms[1]), bdd.get_rating(self.idfilms[2])], 4)
         # self.add_section("Année de fin:", [bdd.get_endYear(idfilm1), bdd.get_endYear(idfilm2), bdd.get_endYear(idfilm3)], 4)
-        self.add_section("Durée:", [bdd.get_runtime(
+        self.add_section("Durée (minutes):", [bdd.get_runtime(
             self.idfilms[0]), bdd.get_runtime(self.idfilms[1]), bdd.get_runtime(self.idfilms[2])], 5)
-        self.add_section("Genre(s):", [bdd.get_genres(
-            self.idfilms[0]), bdd.get_genres(self.idfilms[1]), bdd.get_genres(self.idfilms[2])], 7)
+        self.add_section("Genre(s):", [", ".join(bdd.get_genres(
+            self.idfilms[0])), ", ".join(bdd.get_genres(self.idfilms[1])), ", ".join(bdd.get_genres(self.idfilms[2]))], 7)
 
         # Add Description
         self.add_description(requete.get_desc(self.idfilms[0]), 1)
@@ -102,7 +102,7 @@ class ResultatRecherche(ctk.CTkScrollableFrame):
         label = ctk.CTkLabel(self, text=label_text)
         label.grid(row=row, column=0, padx=20, pady=(10, 10), sticky="ew")
         for i, value in enumerate(values, start=1):
-            value_label = ctk.CTkLabel(self, text=value, wraplength=150)
+            value_label = ctk.CTkLabel(self, text=str(value), wraplength=150)
             value_label.grid(row=row, column=i, padx=20,
                              pady=(10, 10), sticky="ew")
 

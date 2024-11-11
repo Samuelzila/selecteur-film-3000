@@ -114,8 +114,13 @@ class Accueil(tk.Frame):
     def Resultat(self, annee_max, annee_min, rating_max, rating_min, desired_genres):
         # Recherche des films parmi la base de données
 
-        data = bdd[(bdd["genres"].apply(lambda x: any(genre in x for genre in desired_genres))) & (bdd["startYear"] >= int(annee_min)) & (
-            bdd["startYear"] <= int(annee_max)) & (bdd["averageRating"] <= int(rating_max)) & (bdd["averageRating"] >= int(rating_min))]
+        if len(desired_genres) == 0:
+            data = bdd[(bdd["startYear"] >= int(annee_min)) & (
+                bdd["startYear"] <= int(annee_max)) & (bdd["averageRating"] <= int(rating_max)) & (bdd["averageRating"] >= int(rating_min))]
+
+        else:
+            data = bdd[(bdd["genres"].apply(lambda x: any(genre in x for genre in desired_genres))) & (bdd["startYear"] >= int(annee_min)) & (
+                bdd["startYear"] <= int(annee_max)) & (bdd["averageRating"] <= int(rating_max)) & (bdd["averageRating"] >= int(rating_min))]
 
         try:
             with open("data/blacklist.json") as file:

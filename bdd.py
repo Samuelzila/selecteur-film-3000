@@ -130,7 +130,7 @@ def get_runtime(tconst):
     Obtenir la durée d'un film à partir de son identifiant IMDb.
     """
     global bdd
-    return int(bdd.at[tconst, "runtimeMinutes"])
+    return bdd.at[tconst, "runtimeMinutes"]
 
 
 def get_genres(tconst):
