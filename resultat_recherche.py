@@ -22,6 +22,9 @@ class ResultatRecherche(ctk.CTkScrollableFrame):
     def create_widgets(self):
         self.grid(row=0, column=0, padx=20, pady=20,
                   sticky="nsew")  # Main grid layout
+
+        # Force la colonne centrale à prendre de l'espace pour centrer les éléments.
+        # Utile si le graphique ne s'affiche pas.
         self.grid_columnconfigure(2, weight=1)
 
         # Main Header Label
