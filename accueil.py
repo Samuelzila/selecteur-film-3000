@@ -8,15 +8,20 @@ import datetime
 
 import json
 import random
+from ttkwidgets import TickScale
 
 
-class Accueil(tk.Frame):
+
+#ajout de CTkFrame pour changer l'apparance
+
+class Accueil(ctk.CTkFrame):
 
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
         self.create_widgets()
         self.liste_genres = []
+        
 
     # Fonctions qui assure que les recherches sont valides -----------------------------
 
@@ -173,7 +178,12 @@ class Accueil(tk.Frame):
             self.choixGenre.set("")
 
     # visuel de la recherhe
+
+    
     def create_widgets(self):
+
+    # Bouton pour afficher la valeur actuelle
+        ctk.set_appearance_mode("dark")
         self.grid(row=0, column=0, padx=80, pady=20, sticky="nsew")
 
         # Définir la liste des genres avant de l'utiliser
@@ -181,11 +191,30 @@ class Accueil(tk.Frame):
 
         # Variable pour stocker la sélection
         n = tk.StringVar()
+        ###################################################################################################
+        # Labels
+        self.range_label = ctk.CTkLabel(self, text="Plage: 0 - 100")
+        self.range_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
 
+        # Min slider
+        self.min_slider = ctk.CTkSlider(self, from_=0, to=100, command=self.update_range)
+        self.min_slider.set(20)  # Valeur par défaut pour min
+        self.min_slider.grid(row=1, column=0, padx=10, pady=5, sticky="w")
+        self.min_slider.get()
+        # Max slider
+        self.max_slider = ctk.CTkSlider(self, from_=0, to=100, command=self.update_range)
+        self.max_slider.set(80)  # Valeur par défaut pour max
+        self.max_slider.grid(row=2, column=0, padx=10, pady=5, sticky="w")
+
+        # Bouton pour afficher la plage actuelle
+        self.display_button = ctk.CTkButton(self, text="Afficher la plage", command= self.display_range)
+        self.display_button.grid(row=3, column=0, padx=10, pady=5, sticky="w")
+
+       
+        ###################################################################################################
         # Création de labels et entrées pour les années
-        self.label_annee_max = ctk.CTkLabel(
-            self, text="Année Max:", text_color="black")
-        self.label_annee_max.grid(row=1, column=0, padx=10, pady=5, sticky="w")
+        self.label_annee_max = ctk.CTkLabel(self, text="Année Max:", text_color="white")
+        self.label_annee_max.grid(row=7, column=0, padx=10, pady=5, sticky="w")
 
         self.entry_annee_max = ctk.CTkEntry(self, placeholder_text="2000")
         self.entry_annee_max.insert(0, f"{datetime.datetime.now().year}")
@@ -254,3 +283,38 @@ class Accueil(tk.Frame):
         # Configuration des colonnes pour s'assurer que chaque colonne a une taille uniforme
         self.grid_columnconfigure(0, weight=1, uniform="group1")
         self.grid_columnconfigure(1, weight=1, uniform="group1")
+
+    def update_label(self, value):
+        """
+        Met à jour le label lorsque le slider change.
+        """
+        self.value_label.configure(text=f"Valeur: {int(float(value))}")
+
+    def display_value(self):
+        """
+        Affiche la valeur actuelle du slider dans la console.
+        """
+        print(f"Valeur actuelle: {int(self.slider.get())}") 
+
+    def update_range(self, value):
+        """
+        Met à jour le label et gère les limites.
+        """
+        min_val = int(self.min_slider.get())
+        max_val = int(self.max_slider.get())
+        # Empêcher que min dépasse max
+        if min_val >= max_val:
+            self.min_slider.set(max_val - 1)
+        # Empêcher que max soit inférieur à min
+        if max_val <= min_val:
+            self.max_slider.set(min_val + 1)
+        self.range_label.configure(text=f"Plage: {int(self.min_slider.get())} - {int(self.max_slider.get())}")
+
+    def display_range(self):
+        """
+        Affiche la plage actuelle dans la console.
+        """
+        min_val = int(self.min_slider.get())
+        max_val = int(self.max_slider.get())
+        print(f"Plage actuelle: {min_val} - {max_val}")   
+   

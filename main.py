@@ -7,7 +7,8 @@ class MainApp(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("Sélecteur-Film-3000")
-        self.geometry("1280x720")
+        self.geometry("720x640")
+        self._set_appearance_mode("dark")
         self.show_accueil()
 
     def show_accueil(self):
@@ -32,6 +33,9 @@ class MainApp(ctk.CTk):
             widget.destroy()
 
 
+
+
 if __name__ == "__main__":
     app = MainApp()
     app.mainloop()
+    
