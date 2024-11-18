@@ -11,7 +11,7 @@ class Profiles(ctk.CTkFrame):
 
         # Un frame qui contient les icônes des utilisateurs
         button_frame = ctk.CTkFrame(self.master, fg_color="transparent")
-        button_frame.place(rely=0.5, relx=0.5, anchor="center")
+        button_frame.place(rely=0.4, relx=0.5, anchor="center")
 
         # Pour chaque utilisateur détecté, on crée une icône de connection
         for nom in liste_noms:
@@ -27,6 +27,11 @@ class Profiles(ctk.CTkFrame):
             label = ctk.CTkLabel(label_group, text=nom)
             label.pack()
             label_group.pack(padx=20, side="left")
+
+        # Bouton pour créer un utilisateur
+        create_user = ctk.CTkButton(
+            self.master, text="Créer un profil", command=self.master.create_user)
+        create_user.place(relx=0.5, rely=0.5, anchor="center")
 
     def select_user(self, user):
         self.master.user = user
