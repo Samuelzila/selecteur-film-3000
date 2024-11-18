@@ -1,5 +1,4 @@
 import customtkinter as ctk
-import tkinter as tk
 from TMDPAPI import TMDB
 from PIL import ImageTk, Image
 import requests
@@ -23,6 +22,7 @@ class ResultatRecherche(ctk.CTkScrollableFrame):
     def create_widgets(self):
         self.grid(row=0, column=0, padx=20, pady=20,
                   sticky="nsew")  # Main grid layout
+        self.grid_columnconfigure(2, weight=1)
 
         # Main Header Label
         self.label = ctk.CTkLabel(
