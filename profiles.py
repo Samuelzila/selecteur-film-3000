@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import os
 
 
 class Profiles(ctk.CTkFrame):
@@ -7,7 +8,7 @@ class Profiles(ctk.CTkFrame):
         self.create_widgets()
 
     def create_widgets(self):
-        liste_noms = ["Samuel Côté", "Xavier Benoit", "Thomas Poulin"]
+        liste_noms = self.get_users()
 
         # Un frame qui contient les icônes des utilisateurs
         button_frame = ctk.CTkFrame(self.master, fg_color="transparent")
@@ -30,9 +31,18 @@ class Profiles(ctk.CTkFrame):
 
         # Bouton pour créer un utilisateur
         create_user = ctk.CTkButton(
-            self.master, text="Créer un profil", command=self.master.create_user)
+            self.master, text="Créer un profil", command=self.master.show_create_user)
         create_user.place(relx=0.5, rely=0.5, anchor="center")
 
     def select_user(self, user):
         self.master.user = user
         self.master.show_accueil()
+
+    def get_users(self):
+        """
+        Retourne une liste de string correspondant aux noms des utilisateurs.
+        """
+        try:
+            return [file.replace(".json", "") for file in os.listdir("./users/") if os.path.isfile(os.path.join("./users/", file))]
+        except FileNotFoundError:
+            return []

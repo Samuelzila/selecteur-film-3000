@@ -37,7 +37,7 @@ class MainApp(ctk.CTk):
                                                     master=self, width=1280, height=720, corner_radius=0, fg_color="transparent")
         self.resultat_recherche.pack(fill="both", expand=True)
 
-    def create_user(self):
+    def show_create_user(self):
         """
         Interface pour créer un profil
         """
