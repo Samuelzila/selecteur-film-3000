@@ -27,11 +27,6 @@ class ResultatRecherche(ctk.CTkScrollableFrame):
         # Utile si le graphique ne s'affiche pas.
         self.grid_columnconfigure(2, weight=1)
 
-        # Main Header Label
-        self.label = ctk.CTkLabel(
-            self, text="CTkLabel", fg_color="transparent")
-        self.label.grid(row=0, column=0, columnspan=4, padx=20, pady=(10, 10))
-
         # Add Image
         self.add_image(requete.get_image(self.idfilms[0]),
                        row=0, column=1, columnspan=1)
