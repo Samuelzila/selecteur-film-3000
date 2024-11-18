@@ -1,3 +1,4 @@
 .env
+users/
 __pycache__/
 data/blacklist.json
