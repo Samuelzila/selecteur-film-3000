@@ -5,7 +5,7 @@ import bdd as BDD
 from bdd import bdd
 from bdd import genres
 import datetime
-
+from CTkListbox import *
 import json
 import random
 from ttkwidgets import TickScale
@@ -13,7 +13,20 @@ from ttkwidgets import TickScale
 
 
 #ajout de CTkFrame pour changer l'apparance
+BACKGROUND_COLOR = "#2b2b2b"
 
+BUTTON_COLOR = "#FCC398"
+BUTTON_TEXT_COLOR = "#2b2b2b"
+BUTTON_COLOR_HOVER = "#DFAD86"
+
+COLOR_RED = "#FC707A"
+HOVER_COLOR_RED = "#DF626B"
+
+COLOR_BLUE = "#47A4AF"
+HOVER_COLOR_BLUE = "#3C8A93"
+
+COLOR_WHITE = "#ffffff"
+HOVER_COLOR_WHITE = "#E2E2E2"
 class Accueil(ctk.CTkFrame):
 
     def __init__(self, master=None):
@@ -175,7 +188,10 @@ class Accueil(ctk.CTkFrame):
             print(self.choixGenre.get())
             print(BDD.genre_encode(self.choixGenre.get()))
             print(self.liste_genres)
+            self.ajout_de_genre.insert(ctk.END, self.choixGenre.get())
             self.choixGenre.set("")
+            self.supprimer_genre_button.insert(ctk.END, "X")
+            #self.entry_genre.delete(0, tk.END)
 
     # visuel de la recherhe
 
@@ -191,81 +207,88 @@ class Accueil(ctk.CTkFrame):
 
         # Variable pour stocker la sélection
         n = tk.StringVar()
+        n = liste_des_genres
         ###################################################################################################
         # Labels
-        self.range_label = ctk.CTkLabel(self, text="Plage: 0 - 100")
-        self.range_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
 
-        # Min slider
-        self.min_slider = ctk.CTkSlider(self, from_=0, to=100, command=self.update_range)
-        self.min_slider.set(20)  # Valeur par défaut pour min
-        self.min_slider.grid(row=1, column=0, padx=10, pady=5, sticky="w")
-        self.min_slider.get()
-        # Max slider
-        self.max_slider = ctk.CTkSlider(self, from_=0, to=100, command=self.update_range)
-        self.max_slider.set(80)  # Valeur par défaut pour max
-        self.max_slider.grid(row=2, column=0, padx=10, pady=5, sticky="w")
 
-        # Bouton pour afficher la plage actuelle
-        self.display_button = ctk.CTkButton(self, text="Afficher la plage", command= self.display_range)
-        self.display_button.grid(row=3, column=0, padx=10, pady=5, sticky="w")
+        # Titre
+        self.Titre = ctk.CTkLabel(self, text="Sélecteur-Film-3000", text_color="white", font=("Arial", 30, "bold"), justify="center")
+        self.Titre.place(relx=0.5, rely=0.05, anchor="center")
 
-       
-        ###################################################################################################
-        # Création de labels et entrées pour les années
-        self.label_annee_max = ctk.CTkLabel(self, text="Année Max:", text_color="white")
-        self.label_annee_max.grid(row=7, column=0, padx=10, pady=5, sticky="w")
+        # Plage années
+        self.range_label = ctk.CTkLabel(self, text="Années min: 1900 -  Années max: 2024", text_color=COLOR_WHITE, font=("Arial", 14))
+        self.range_label.place(relx=0.1, rely=0.2, anchor="w")
 
-        self.entry_annee_max = ctk.CTkEntry(self, placeholder_text="2000")
-        self.entry_annee_max.insert(0, f"{datetime.datetime.now().year}")
-        self.entry_annee_max.grid(row=1, column=1, padx=10, pady=5, sticky="w")
+        self.min_slider = ctk.CTkSlider(self, from_=1900, to=datetime.datetime.now().year, command=self.update_range, progress_color=COLOR_BLUE, button_color= COLOR_WHITE,button_hover_color = HOVER_COLOR_WHITE)
+        self.min_slider.set(1900)
+        self.min_slider.place(relx=0.1, rely=0.25, relwidth=0.3)
 
-        self.label_annee_min = ctk.CTkLabel(
-            self, text="Année Min:", text_color="black")
-        self.label_annee_min.grid(row=2, column=0, padx=10, pady=5, sticky="w")
+        self.max_slider = ctk.CTkSlider(self, from_=1900, to=datetime.datetime.now().year, command=self.update_range,progress_color=COLOR_BLUE, button_color= COLOR_WHITE, button_hover_color = HOVER_COLOR_WHITE)
+        self.max_slider.set(datetime.datetime.now().year)
+        self.max_slider.place(relx=0.1, rely=0.3, relwidth=0.3)
 
-        self.entry_annee_min = ctk.CTkEntry(self, placeholder_text="2000")
-        self.entry_annee_min.insert(0, "1900")
-        self.entry_annee_min.grid(row=2, column=1, padx=10, pady=5, sticky="w")
 
-        # Création de labels et entrées pour les Rating
-        self.label_rating_max = ctk.CTkLabel(
-            self, text="Rating Max:", text_color="black")
-        self.label_rating_max.grid(
-            row=1, column=3, padx=10, pady=5, sticky="w")
+        # Plage ratings
+        self.range_label_rating = ctk.CTkLabel(self, text="Rating min: 0  -  Rating max: 10", text_color=COLOR_WHITE, font=("Arial", 14))
+        self.range_label_rating.place(relx=0.6, rely=0.2, anchor="w")
 
-        self.entry_rating_max = ctk.CTkEntry(
-            self, placeholder_text="10")
-        self.entry_rating_max.insert(0, "10")
-        self.entry_rating_max.grid(
-            row=1, column=4, padx=10, pady=5, sticky="w")
+        self.min_slider_rating = ctk.CTkSlider(self, from_=0, to=10, command=self.update_range_rating,progress_color=COLOR_BLUE, button_color= COLOR_WHITE,  button_hover_color = HOVER_COLOR_WHITE)
+        self.min_slider_rating.set(0)
+        self.min_slider_rating.place(relx=0.6, rely=0.25, relwidth=0.3)
 
-        self.label_rating_min = ctk.CTkLabel(
-            self, text="Rating Min:", text_color="black")
-        self.label_rating_min.grid(
-            row=2, column=3, padx=10, pady=5, sticky="w")
+        self.max_slider_rating = ctk.CTkSlider(self, from_=0, to=10, command=self.update_range_rating,progress_color=COLOR_BLUE, button_color= COLOR_WHITE,  button_hover_color = HOVER_COLOR_WHITE)
+        self.max_slider_rating.set(10)
+        self.max_slider_rating.place(relx=0.6, rely=0.3, relwidth=0.3)
 
-        self.entry_rating_min = ctk.CTkEntry(self, placeholder_text="0")
-        self.entry_rating_min.insert(0, "0")
-        self.entry_rating_min.grid(
-            row=2, column=4, padx=10, pady=5, sticky="w")
+        # Boutons et listes déroulantes
+        #self.collect_button = ctk.CTkButton(self, text="Collecter", command=self.collect_info, font=("Arial", 14))
+        #self.collect_button.place(relx=0.5, rely=0.5, anchor="center")
 
-        # Bouton pour collecter les informations
-        self.collect_button = ctk.CTkButton(
-            self, text="Collecter",  command=self.collect_info)
-        self.collect_button.grid(row=3, column=3, padx=10, pady=20, sticky="w")
+        self.add_Genre = ctk.CTkButton(self, text="+", command=self.add_genres, fg_color=BUTTON_COLOR, text_color=BUTTON_TEXT_COLOR, hover_color= BUTTON_COLOR_HOVER ,width=25, height=25, corner_radius=15, font=("Arial", 12))
+        self.add_Genre.place(relx=0.40, rely=0.40, anchor="center")
 
-        self.add_Genre = ctk.CTkButton(self, text="ajouter Genre",  command=self.add_genres,
-                                       fg_color="gray", text_color="white", hover_color="black")
-        self.add_Genre.grid(row=3, column=1, padx=10, pady=20, sticky="w")
+        self.choixGenre = ttk.Combobox(self, width=19, font=("Arial", 12), justify="center", values=n)
+        self.choixGenre.place(relx=0.23, rely=0.40, anchor="center")
+        self.choixGenre.set("")
 
-        # Création du combobox avec la liste des genres
-        self.choixGenre = ttk.Combobox(self, width=20, textvariable=n)
-        self.choixGenre.grid(row=3, column=0, padx=10, pady=5, sticky="w")
-        self.choixGenre["values"] = liste_des_genres
-        self.choixGenre.set("")  # Valeur spar défaut vide
+        # Liste des genres ajoutés
+        self.ajout_de_genre = CTkListbox(
+            self,
+            width=210,
+            height=200,
+            multiple_selection=True,
+            border_width=0,
+            button_color= COLOR_BLUE,
+            hover_color= HOVER_COLOR_BLUE,
+            text_color=COLOR_WHITE,
+            fg_color="transparent",
+            justify="left"
+        )
+        self.ajout_de_genre.place(relx=0.25, rely=0.6, anchor="center")
 
-        # Fonction de recherche pour filtrer les options en fonction de la saisie
+        # Bouton pour supprimer un genre
+        self.supprimer_genre_button = CTkListbox(
+            self,
+            command=self.supprimer_genre,
+            multiple_selection=True,
+            width=30,
+            height=200,
+            button_color=COLOR_RED,
+            hover_color=HOVER_COLOR_RED,
+            text_color= COLOR_WHITE,
+            border_width=0,
+            fg_color="transparent",
+            justify="left",
+            #scrollbar_button_color="#4f574f"
+        )
+        self.supprimer_genre_button.place(relx=0.40, rely=0.6, anchor="center")
+
+
+    
+
+        # Supprimer bouton (placeholder exemple)
+        
         def recherche_Liste(event):
 
             value = event.widget.get()
@@ -284,6 +307,7 @@ class Accueil(ctk.CTkFrame):
         self.grid_columnconfigure(0, weight=1, uniform="group1")
         self.grid_columnconfigure(1, weight=1, uniform="group1")
 
+    
     def update_label(self, value):
         """
         Met à jour le label lorsque le slider change.
@@ -297,9 +321,7 @@ class Accueil(ctk.CTkFrame):
         print(f"Valeur actuelle: {int(self.slider.get())}") 
 
     def update_range(self, value):
-        """
-        Met à jour le label et gère les limites.
-        """
+        
         min_val = int(self.min_slider.get())
         max_val = int(self.max_slider.get())
         # Empêcher que min dépasse max
@@ -308,7 +330,7 @@ class Accueil(ctk.CTkFrame):
         # Empêcher que max soit inférieur à min
         if max_val <= min_val:
             self.max_slider.set(min_val + 1)
-        self.range_label.configure(text=f"Plage: {int(self.min_slider.get())} - {int(self.max_slider.get())}")
+        self.range_label.configure(text=f"Années min: {int(self.min_slider.get())} -  Années max: {int(self.max_slider.get())}")
 
     def display_range(self):
         """
@@ -318,3 +340,25 @@ class Accueil(ctk.CTkFrame):
         max_val = int(self.max_slider.get())
         print(f"Plage actuelle: {min_val} - {max_val}")   
    
+    
+    def update_range_rating(self, value):
+        min_val = int(self.min_slider_rating.get())
+        max_val = int(self.max_slider_rating.get())
+        # Empêcher que min spepasse max
+        if min_val >= max_val:
+            self.min_slider_rating.set(max_val - 1)
+        # Empêcher que max soit infériror à min
+        if max_val <= min_val:
+            self.max_slider_rating.set(min_val + 1)
+        self.range_label_rating.configure(text=f"Rating min: {int(self.min_slider_rating.get())} -  Rating max: {int(self.max_slider_rating.get())}")
+
+       
+
+    def supprimer_genre(self,value):
+        selection = self.supprimer_genre_button.curselection()
+        print(selection)
+        for index in reversed(selection):
+            self.ajout_de_genre.delete(index)
+            self.supprimer_genre_button.delete(index)
+            self.liste_genres.remove(self.ajout_de_genre.get(index))
+            
