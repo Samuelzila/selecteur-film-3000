@@ -40,7 +40,6 @@ class Accueil(tk.Frame):
 
     def cohérence_rating(self, entry1, entry2):
         if entry1 >= entry2:
-            print(entry1, entry2)
             return True
         else:
             return False
@@ -62,10 +61,8 @@ class Accueil(tk.Frame):
 
         cohérence_annees = self.cohérence_annee(
             int(self.entry_annee_max.get()), int(self.entry_annee_min.get()))
-        print(cohérence_annees)
         cohérence_rating = self.cohérence_rating(
             int(self.entry_rating_max.get()), int(self.entry_rating_min.get()))
-        print(cohérence_rating)
         genres_not_exist = self.genres_exist(self.choixGenre.get())
 
         if not self.range_annee(self.entry_annee_max.get()) and cohérence_annees:
@@ -123,9 +120,9 @@ class Accueil(tk.Frame):
                 bdd["startYear"] <= int(annee_max)) & (bdd["averageRating"] <= int(rating_max)) & (bdd["averageRating"] >= int(rating_min))]
 
         try:
-            with open("data/blacklist.json") as file:
+            with open(f"users/{self.master.user}.json") as file:
 
-                blacklist = json.load(file)
+                blacklist = json.load(file)["blacklist"]
         except FileNotFoundError:
             blacklist = []
 
@@ -135,7 +132,6 @@ class Accueil(tk.Frame):
         # si la recherche ne renvoie pas 3 films, on ajoute des films au hasard
         if len(data) < 3:
             nombre_de_film = len(data)
-            print("nombre de film : ", nombre_de_film)
             for i in range(0, 3 - nombre_de_film):
                 trouver = False
                 while (not trouver):
@@ -148,7 +144,6 @@ class Accueil(tk.Frame):
                         trouver = True
 
         # si la recherche renvoie plus de 3 films, on ajoute des films au hasard depuis la recherche
-        print(nombre_de_film)
         for i in range(0, nombre_de_film):
             while (True):
                 idFilm = data.sample(1).index[0]
@@ -162,14 +157,10 @@ class Accueil(tk.Frame):
     def add_genres(self):
 
         if self.genres_exist(self.choixGenre.get()):
-            print("mauvaise entrée")
             self.choixGenre.configure(foreground="red")
         else:
             self.choixGenre.configure(foreground="green")
             self.liste_genres.append(BDD.genre_encode(self.choixGenre.get()))
-            print(self.choixGenre.get())
-            print(BDD.genre_encode(self.choixGenre.get()))
-            print(self.liste_genres)
             self.choixGenre.set("")
 
     # visuel de la recherhe

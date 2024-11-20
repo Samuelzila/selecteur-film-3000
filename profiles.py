@@ -1,5 +1,6 @@
 import customtkinter as ctk
 import os
+from functools import partial
 
 
 class Profiles(ctk.CTkFrame):
@@ -23,7 +24,7 @@ class Profiles(ctk.CTkFrame):
             label_group = ctk.CTkFrame(button_frame, fg_color="transparent")
             # Ajout d'un bouton carré, pour le profil
             icon = ctk.CTkButton(
-                label_group, text=initiales, command=lambda: self.select_user(nom), width=75, height=75, font=("Arial", 32, "bold"))
+                label_group, text=initiales, command=partial(self.select_user, nom), width=75, height=75, font=("Arial", 32, "bold"))
             icon.pack()
             label = ctk.CTkLabel(label_group, text=nom)
             label.pack()

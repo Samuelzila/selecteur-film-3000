@@ -12,6 +12,9 @@ class MainApp(ctk.CTk):
         self.geometry("1280x720")
         self.show_profiles()
 
+        # Paramètre pour savoir qui utilise l'application
+        self.user = None
+
     def show_profiles(self):
         """
         La page d'affichage des profils.
