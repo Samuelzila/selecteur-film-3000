@@ -15,7 +15,8 @@ requete = TMDB()
 
 class ResultatRecherche(ctk.CTkScrollableFrame):
     def __init__(self, idfilms, master=None, **kwargs):
-        super().__init__(master, **kwargs)
+        super().__init__(master)
+        self.master = master
         self.idfilms = idfilms
         self.create_widgets()
 
@@ -73,16 +74,16 @@ class ResultatRecherche(ctk.CTkScrollableFrame):
         Ajouter un film dans la blacklist.
         """
         try:
-            file = open("./data/blacklist.json")
-            blacklist = json.load(file)
-            file.close()
+            with open(f"./users/{self.master.user}.json", "r") as file:
+                user = json.load(file)
         except FileNotFoundError:
-            blacklist = []
+            print("User not found.")
+            return
 
-        blacklist.append(id)
+        user["blacklist"].append(id)
 
-        with open("./data/blacklist.json", "w") as file:
-            json.dump(blacklist, file)
+        with open(f"./users/{self.master.user}.json", "w") as file:
+            json.dump(user, file)
 
     def add_description(self, label_text, column):
         """Helper function to add a description to the grid."""
