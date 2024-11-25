@@ -130,9 +130,10 @@ class Accueil(ctk.CTkFrame):
         #genre vide
         if len(desired_genres) == 0:
             data = bdd[(bdd["startYear"] >= int(annee_min)) & (
-                bdd["startYear"] <= int(annee_max)) & (bdd["averageRating"] <= int(rating_max)) & (bdd["averageRating"] >= int(rating_min))]
+                bdd["startYear"] <= int(annee_max)) & (bdd["averageRating"] <= int(rating_max)) & (bdd["averageRating"] >= int(rating_min))& (bdd["averageRating"] >= int(rating_min)) & (bdd["runtimeMinutes"] <= int(duration_max)) & (bdd["runtimeMinutes"] >= int(duration_min))]
 
         else:
+            print(" duration max : ",int(duration_max), int(duration_min))
             data = bdd[(bdd["genres"].apply(lambda x: any(genre in x for genre in desired_genres))) & (bdd["startYear"] >= int(annee_min))
                         & (bdd["startYear"] <= int(annee_max)) & (bdd["averageRating"] <= int(rating_max)) & (bdd["averageRating"] >= int(rating_min)) & (bdd["runtimeMinutes"] <= int(duration_max)) & (bdd["runtimeMinutes"] >= int(duration_min))]
 
