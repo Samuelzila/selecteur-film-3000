@@ -16,7 +16,8 @@ requete = TMDB()
 
 class ResultatRecherche(ctk.CTkScrollableFrame):
     def __init__(self, idfilms, master=None, **kwargs):
-        super().__init__(master, **kwargs)
+        self.master = master
+        super().__init__(self.master, **kwargs)
         self.idfilms = idfilms
         self.create_widgets()
 
@@ -24,6 +25,20 @@ class ResultatRecherche(ctk.CTkScrollableFrame):
         self.grid(row=0, column=0, padx=20, pady=20,
                   sticky="nsew")  # Main grid layout
 
+        #add retour au profil
+        self.retour = ctk.CTkButton(self, text="Retour au profil",  command=self.retour)
+        self.retour.grid(row=0, column=4, padx=10, pady=20)
+        
+        #add like
+        self.like = ctk.CTkButton(self, text="Like!",  command=self.likee)
+        self.like.grid(row=11, column=1, padx=10, pady=20)
+
+        self.like = ctk.CTkButton(self, text="Like!",  command=self.likee)
+        self.like.grid(row=11, column=2, padx=10, pady=20)
+
+        self.like = ctk.CTkButton(self, text="Like!",  command=self.likee)
+        self.like.grid(row=11, column=3, padx=10, pady=20)
+        
         # Main Header Label
         self.label = ctk.CTkLabel(
             self, text="CTkLabel", fg_color="transparent")
@@ -69,6 +84,12 @@ class ResultatRecherche(ctk.CTkScrollableFrame):
         button = ctk.CTkButton(
             self, text="Ne plus afficher", command=partial(self.ne_plus_afficher, self.idfilms[2]))
         button.grid(row=10, column=3)
+
+    def likee(self):
+        pass
+    
+    def retour(self):
+        self.master.show_profil()
 
     def ne_plus_afficher(self, id):
         """
@@ -139,10 +160,10 @@ class ResultatRecherche(ctk.CTkScrollableFrame):
                 plt.plot(data.index, series, label=name)
             plt.legend(loc="upper left")
             # Intégrer le graphique dans tkinter
-            self.canvas = FigureCanvasTkAgg(plt.gcf(), master=self)
+            self.canvas = FigureCanvasTkAgg(plt.gcf(), master = self)
             self.canvas.draw()
             self.canvas.get_tk_widget().grid(
-                row=11, column=1, pady=(10, 10), columnspan=columnspan)
+                row=12, column=1, pady=(10, 10), columnspan=columnspan)
 
     def add_no_image_available(self, row, column, columnspan):
         """

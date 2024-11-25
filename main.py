@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from accueil import Accueil
 from resultat_recherche import ResultatRecherche
+from profil import Profil
 
 
 class MainApp(ctk.CTk):
@@ -8,7 +9,16 @@ class MainApp(ctk.CTk):
         super().__init__()
         self.title("Sélecteur-Film-3000")
         self.geometry("1280x720")
-        self.show_accueil()
+        self.show_profil()
+        #self.show_accueil()
+
+    def show_profil(self):
+        """
+        La page de profil, où on peut créer un profil.
+        """
+        self.clear_main_frame()
+        self.profil = Profil(master=self)
+        self.profil.pack(fill="both", expand=True)
 
     def show_accueil(self):
         """
