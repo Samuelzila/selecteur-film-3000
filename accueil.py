@@ -10,7 +10,8 @@ import json
 import random
 from ttkwidgets import TickScale
 
-
+#TODO: ajouter sélection biaisé 
+#TODO: ajouter genre sélectif
 
 #ajout de CTkFrame pour changer l'apparance
 BACKGROUND_COLOR = "#2b2b2b"
@@ -110,35 +111,30 @@ class Accueil(ctk.CTkFrame):
     def collect_info(self):
 
         # Vérification des informations entrées
-        if self.is_empty(self.entry_annee_max.get(), self.entry_annee_min.get(), self.entry_rating_max.get(), self.entry_rating_min.get(), self.liste_genres):
-            ctk.CTkLabel(self, text="Veuillez entrer des valeurs.", text_color="red").grid(
-                row=4, column=0, padx=10, pady=10, sticky="w")
-        else:
-            # vérification des informations valides
-            if self.range_annee(self.entry_annee_max.get()) or self.range_annee(self.entry_annee_min.get()) or self.range_rating(self.entry_rating_max.get()) or self.range_rating(self.entry_rating_min.get()) or not self.cohérence_rating(int(self.entry_rating_max.get()), int(self.entry_rating_min.get())) or not self.cohérence_annee(int(self.entry_annee_max.get()), int(self.entry_annee_min.get())):
-                self.show_invalid_entry()
-            else:
-                # Collecte des informations entrées par l'utilisateur
-                annee_max = self.entry_annee_max.get()
-                annee_min = self.entry_annee_min.get()
-                rating_max = self.entry_rating_max.get()
-                rating_min = self.entry_rating_min.get()
-                genre = self.liste_genres
+        
+        # Collecte des informations entrées par l'utilisateur
+        annee_max = self.max_slider.get()
+        annee_min = self.min_slider.get()
+        rating_max = self.max_slider_rating.get()/10
+        rating_min = self.min_slider_rating.get()/10
+        duration_max = self.max_slider_temps.get()
+        duration_min = self.min_slider_temps.get()
+        print("duration max : ", duration_max, "duration min : ", duration_min)
+        genre = self.liste_genres      
+         # Changer de fenêtre
+        self.master.show_Films(tuple(self.Resultat(annee_max, annee_min, rating_max, rating_min, genre, duration_max, duration_min)))
 
-                # Changer de fenêtre
-                self.master.show_Films(
-                    tuple(self.Resultat(annee_max, annee_min, rating_max, rating_min, genre)))
-
-    def Resultat(self, annee_max, annee_min, rating_max, rating_min, desired_genres):
+    def Resultat(self, annee_max, annee_min, rating_max, rating_min, desired_genres, duration_max, duration_min):
         # Recherche des films parmi la base de données
 
+        #genre vide
         if len(desired_genres) == 0:
             data = bdd[(bdd["startYear"] >= int(annee_min)) & (
                 bdd["startYear"] <= int(annee_max)) & (bdd["averageRating"] <= int(rating_max)) & (bdd["averageRating"] >= int(rating_min))]
 
         else:
-            data = bdd[(bdd["genres"].apply(lambda x: any(genre in x for genre in desired_genres))) & (bdd["startYear"] >= int(annee_min)) & (
-                bdd["startYear"] <= int(annee_max)) & (bdd["averageRating"] <= int(rating_max)) & (bdd["averageRating"] >= int(rating_min))]
+            data = bdd[(bdd["genres"].apply(lambda x: any(genre in x for genre in desired_genres))) & (bdd["startYear"] >= int(annee_min))
+                        & (bdd["startYear"] <= int(annee_max)) & (bdd["averageRating"] <= int(rating_max)) & (bdd["averageRating"] >= int(rating_min)) & (bdd["runtimeMinutes"] <= int(duration_max)) & (bdd["runtimeMinutes"] >= int(duration_min))]
 
         try:
             with open("data/blacklist.json") as file:
@@ -146,8 +142,11 @@ class Accueil(ctk.CTkFrame):
                 blacklist = json.load(file)
         except FileNotFoundError:
             blacklist = []
+        
+        print(data["runtimeMinutes"])
 
         liste_des_films = []
+        rating_liste = []
         nombre_de_film = 3
 
         # si la recherche ne renvoie pas 3 films, on ajoute des films au hasard
@@ -157,8 +156,7 @@ class Accueil(ctk.CTkFrame):
             for i in range(0, 3 - nombre_de_film):
                 trouver = False
                 while (not trouver):
-                    idFilm = bdd.sample(
-                        1, random_state=random.randint(0, 10000)).index[0]
+                    idFilm = bdd.sample(1, random_state=random.randint(0, 10000)).index[0]
 
                     if idFilm not in blacklist:
                         blacklist.append(idFilm)
@@ -166,20 +164,37 @@ class Accueil(ctk.CTkFrame):
                         trouver = True
 
         # si la recherche renvoie plus de 3 films, on ajoute des films au hasard depuis la recherche
-        print(nombre_de_film)
-        for i in range(0, nombre_de_film):
-            while (True):
-                idFilm = data.sample(1).index[0]
-                if idFilm not in blacklist:
-                    break
-            blacklist.append(idFilm)
-            liste_des_films.append(idFilm)
-
+        if len(data) > nombre_de_film*3:
+            print(nombre_de_film)
+            for i in range(0, nombre_de_film*3):
+                while (True):
+                    idFilm = data.sample(1)
+                    rating_liste.append([idFilm["averageRating"].values[0], idFilm.index[0]])
+                    if idFilm not in blacklist:
+                        break
+            print(rating_liste)
+            rating_liste.sort(reverse=True)
+            print(rating_liste)
+            for i in range(0, 3):
+                liste_des_films.append(rating_liste[i][1])
+                print(liste_des_films)
+                blacklist.append(rating_liste[i][1])
+        
+        else:
+            print(nombre_de_film)
+            for i in range(0, nombre_de_film*10):
+                while (True):
+                    idFilm = data.sample(1).index[0]
+                    if idFilm not in blacklist:
+                        break
+                blacklist.append(idFilm)
+                liste_des_films.append(idFilm)
+        
         return liste_des_films
 
     def add_genres(self):
 
-        if self.genres_exist(self.choixGenre.get()):
+        if self.genres_exist(self.choixGenre.get() or self.choixGenre.get() in self.liste_genres):
             print("mauvaise entrée")
             self.choixGenre.configure(foreground="red")
         else:
@@ -233,17 +248,29 @@ class Accueil(ctk.CTkFrame):
         self.range_label_rating = ctk.CTkLabel(self, text="Rating min: 0  -  Rating max: 10", text_color=COLOR_WHITE, font=("Arial", 14))
         self.range_label_rating.place(relx=0.6, rely=0.2, anchor="w")
 
-        self.min_slider_rating = ctk.CTkSlider(self, from_=0, to=10, command=self.update_range_rating,progress_color=COLOR_BLUE, button_color= COLOR_WHITE,  button_hover_color = HOVER_COLOR_WHITE)
+        self.min_slider_rating = ctk.CTkSlider(self, from_=0, to=100, command=self.update_range_rating,progress_color=COLOR_BLUE, button_color= COLOR_WHITE,  button_hover_color = HOVER_COLOR_WHITE)
         self.min_slider_rating.set(0)
         self.min_slider_rating.place(relx=0.6, rely=0.25, relwidth=0.3)
 
-        self.max_slider_rating = ctk.CTkSlider(self, from_=0, to=10, command=self.update_range_rating,progress_color=COLOR_BLUE, button_color= COLOR_WHITE,  button_hover_color = HOVER_COLOR_WHITE)
-        self.max_slider_rating.set(10)
+        self.max_slider_rating = ctk.CTkSlider(self, from_=0, to=100, command=self.update_range_rating,progress_color=COLOR_BLUE, button_color= COLOR_WHITE,  button_hover_color = HOVER_COLOR_WHITE)
+        self.max_slider_rating.set(100)
         self.max_slider_rating.place(relx=0.6, rely=0.3, relwidth=0.3)
 
+        # Plage Temps des films:
+
+        self.range_label_temps = ctk.CTkLabel(self, text="Duration min: 0  -  Duration max: 180", text_color=COLOR_WHITE, font=("Arial", 14))
+        self.range_label_temps.place(relx=0.6, rely=0.4, anchor="w")
+
+        self.min_slider_temps = ctk.CTkSlider(self, from_=0, to=180, command=self.update_range_Temps,progress_color=COLOR_BLUE, button_color= COLOR_WHITE,  button_hover_color = HOVER_COLOR_WHITE, )
+        self.min_slider_temps.set(0)
+        self.min_slider_temps.place(relx=0.6, rely=0.45, relwidth=0.3)
+
+        self.max_slider_temps = ctk.CTkSlider(self, from_=0, to=180, command=self.update_range_Temps,progress_color=COLOR_BLUE, button_color= COLOR_WHITE,  button_hover_color = HOVER_COLOR_WHITE)
+        self.max_slider_temps.set(180)
+        self.max_slider_temps.place(relx=0.6, rely=0.50, relwidth=0.3)       
         # Boutons et listes déroulantes
-        #self.collect_button = ctk.CTkButton(self, text="Collecter", command=self.collect_info, font=("Arial", 14))
-        #self.collect_button.place(relx=0.5, rely=0.5, anchor="center")
+        self.collect_button = ctk.CTkButton(self, text="Collecter", command=self.collect_info, font=("Arial", 14),fg_color=BUTTON_COLOR, text_color=BUTTON_TEXT_COLOR, hover_color= BUTTON_COLOR_HOVER ,width=60, height=60, corner_radius=32)
+        self.collect_button.place(relx=0.6, rely=0.6, relwidth=0.3)
 
         self.add_Genre = ctk.CTkButton(self, text="+", command=self.add_genres, fg_color=BUTTON_COLOR, text_color=BUTTON_TEXT_COLOR, hover_color= BUTTON_COLOR_HOVER ,width=25, height=25, corner_radius=15, font=("Arial", 12))
         self.add_Genre.place(relx=0.40, rely=0.40, anchor="center")
@@ -350,15 +377,39 @@ class Accueil(ctk.CTkFrame):
         # Empêcher que max soit infériror à min
         if max_val <= min_val:
             self.max_slider_rating.set(min_val + 1)
-        self.range_label_rating.configure(text=f"Rating min: {int(self.min_slider_rating.get())} -  Rating max: {int(self.max_slider_rating.get())}")
+        mi = round(int(self.min_slider_rating.get())*0.1,1)
+        ma = round(int(self.max_slider_rating.get())*0.1,1)
+        
+        print(mi,ma)
+        self.range_label_rating.configure(text=f"Rating min: {mi} -  Rating max: {ma}")
 
-       
+    def update_range_Temps(self, value):
+        min_val = int(self.min_slider_temps.get())
+        max_val = int(self.max_slider_temps.get())
+        # Empêcher que min spepasse max
+        if min_val >= max_val:
+            self.min_slider_temps.set(max_val - 1)
+        # Empêcher que max soit infériror à min
+        if max_val <= min_val:
+            self.max_slider_temps.set(min_val + 1)
+        self.range_label_temps.configure(text=f"Duration min: {int(self.min_slider_temps.get())} -  Duration max: {int(self.max_slider_temps.get())}")
 
-    def supprimer_genre(self,value):
+
+    def supprimer_genre(self, val):
         selection = self.supprimer_genre_button.curselection()
-        print(selection)
-        for index in reversed(selection):
+        if selection:
+            index = selection[0]
+            value = self.ajout_de_genre.get(index)
+            print("liste des genres", self.liste_genres)
+            print("value to remove", value)
+            print("decoded value", BDD.genre_encode(value))
             self.ajout_de_genre.delete(index)
+            decoded_value = BDD.genre_encode(value)
+            if decoded_value in self.liste_genres:
+                print("decoded value found in liste_genres")
+                self.liste_genres.remove(decoded_value)
+            else:
+                print("decoded value not found in liste_genres")
             self.supprimer_genre_button.delete(index)
-            self.liste_genres.remove(self.ajout_de_genre.get(index))
-            
+            print("liste des genres", self.liste_genres)  # delete the last item
+            #Bug mais ça marche lol
