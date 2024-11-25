@@ -12,13 +12,15 @@ from functools import partial
 import json
 
 requete = TMDB()
-
+filmliké = []
 
 class ResultatRecherche(ctk.CTkScrollableFrame):
-    def __init__(self, idfilms, master=None, **kwargs):
+    def __init__(self, profil_instance, profil_actif, master=None, idfilms=None, **kwargs):
+        super().__init__(master, **kwargs)
         self.master = master
-        super().__init__(self.master, **kwargs)
         self.idfilms = idfilms
+        self.profil_instance = profil_instance
+        self.profil_actif = profil_actif  # Le nom du profil sélectionné
         self.create_widgets()
 
     def create_widgets(self):
@@ -26,18 +28,14 @@ class ResultatRecherche(ctk.CTkScrollableFrame):
                   sticky="nsew")  # Main grid layout
 
         #add retour au profil
-        self.retour = ctk.CTkButton(self, text="Retour au profil",  command=self.retour)
+        self.retour = ctk.CTkButton(self, text="Retour au profil",  command=self.master.show_profil)
         self.retour.grid(row=0, column=4, padx=10, pady=20)
         
-        #add like
-        self.like = ctk.CTkButton(self, text="Like!",  command=self.likee)
-        self.like.grid(row=11, column=1, padx=10, pady=20)
-
-        self.like = ctk.CTkButton(self, text="Like!",  command=self.likee)
-        self.like.grid(row=11, column=2, padx=10, pady=20)
-
-        self.like = ctk.CTkButton(self, text="Like!",  command=self.likee)
-        self.like.grid(row=11, column=3, padx=10, pady=20)
+        
+        # Boutons Like
+        for i, film in enumerate(self.idfilms):
+            bouton_like = ctk.CTkButton(self, text="Like!", command=partial(self.likee, film))
+            bouton_like.grid(row=11, column=i + 1, padx=10, pady=20)
         
         # Main Header Label
         self.label = ctk.CTkLabel(
@@ -75,21 +73,20 @@ class ResultatRecherche(ctk.CTkScrollableFrame):
         self.add_description(requete.get_desc(self.idfilms[1]), 2)
         self.add_description(requete.get_desc(self.idfilms[2]), 3)
 
-        button = ctk.CTkButton(
-            self, text="Ne plus afficher", command=partial(self.ne_plus_afficher, self.idfilms[0]))
+        button = ctk.CTkButton(self, text="Ne plus afficher", command=partial(self.ne_plus_afficher, self.idfilms[0]))
         button.grid(row=10, column=1)
-        button = ctk.CTkButton(
-            self, text="Ne plus afficher", command=partial(self.ne_plus_afficher, self.idfilms[1]))
+        button = ctk.CTkButton(self, text="Ne plus afficher", command=partial(self.ne_plus_afficher, self.idfilms[1]))
         button.grid(row=10, column=2)
-        button = ctk.CTkButton(
-            self, text="Ne plus afficher", command=partial(self.ne_plus_afficher, self.idfilms[2]))
+        button = ctk.CTkButton(self, text="Ne plus afficher", command=partial(self.ne_plus_afficher, self.idfilms[2]))
         button.grid(row=10, column=3)
 
-    def likee(self):
-        pass
-    
-    def retour(self):
-        self.master.show_profil()
+    def likee(self, film):
+        """Ajoute un film liké au profil actif."""
+        if self.profil_actif:
+            self.profil_instance.ajouter_film_au_profil(self.profil_actif, film)
+        else:
+            print("Aucun profil actif sélectionné.")
+
 
     def ne_plus_afficher(self, id):
         """

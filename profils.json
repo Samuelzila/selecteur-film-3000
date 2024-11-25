@@ -2,16 +2,39 @@
     {
         "nom": "Xavier",
         "email": "xavierbenoit888@gmail.com",
-        "age": "18"
+        "age": "18",
+        "films_lik\u00e9s": []
     },
     {
         "nom": "Thomas",
         "email": "thomthom@gmail.com",
-        "age": "18"
+        "age": "18",
+        "films_lik\u00e9s": [
+            "tt17042894",
+            "tt0113557",
+            "tt0165996",
+            "tt0130392",
+            "tt2063633"
+        ]
     },
     {
         "nom": "Samy",
         "email": "grandsagesamy@gmail.com",
-        "age": "9999999999999"
+        "age": "9999999999999",
+        "films_lik\u00e9s": [
+            "tt7960962"
+        ]
+    },
+    {
+        "nom": "test03",
+        "email": "t",
+        "age": "99",
+        "films_lik\u00e9s": []
+    },
+    {
+        "nom": "test04",
+        "email": "",
+        "age": "",
+        "films_lik\u00e9s": []
     }
 ]
