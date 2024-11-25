@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import popularity
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from functools import partial
-import json
 
 requete = TMDB()
 
@@ -48,7 +47,6 @@ class ResultatRecherche(ctk.CTkScrollableFrame):
             self.idfilms[0]), bdd.get_startYear(self.idfilms[1]), bdd.get_startYear(self.idfilms[2])], 3)
         self.add_section("Rating (sur 10):", [bdd.get_rating(
             self.idfilms[0]), bdd.get_rating(self.idfilms[1]), bdd.get_rating(self.idfilms[2])], 4)
-        # self.add_section("Année de fin:", [bdd.get_endYear(idfilm1), bdd.get_endYear(idfilm2), bdd.get_endYear(idfilm3)], 4)
         self.add_section("Durée (minutes):", [bdd.get_runtime(
             self.idfilms[0]), bdd.get_runtime(self.idfilms[1]), bdd.get_runtime(self.idfilms[2])], 5)
         self.add_section("Genre(s):", [", ".join(bdd.get_genres(
@@ -60,30 +58,14 @@ class ResultatRecherche(ctk.CTkScrollableFrame):
         self.add_description(requete.get_desc(self.idfilms[2]), 3)
 
         button = ctk.CTkButton(
-            self, text="Ne plus afficher", command=partial(self.ne_plus_afficher, self.idfilms[0]))
+            self, text="Ne plus afficher", command=partial(self.master.user.add_to_blacklist, self.idfilms[0]))
         button.grid(row=10, column=1)
         button = ctk.CTkButton(
-            self, text="Ne plus afficher", command=partial(self.ne_plus_afficher, self.idfilms[1]))
+            self, text="Ne plus afficher", command=partial(self.master.user.add_to_blacklist, self.idfilms[1]))
         button.grid(row=10, column=2)
         button = ctk.CTkButton(
-            self, text="Ne plus afficher", command=partial(self.ne_plus_afficher, self.idfilms[2]))
+            self, text="Ne plus afficher", command=partial(self.master.user.add_to_blacklist, self.idfilms[2]))
         button.grid(row=10, column=3)
-
-    def ne_plus_afficher(self, id):
-        """
-        Ajouter un film dans la blacklist.
-        """
-        try:
-            with open(f"./users/{self.master.user}.json", "r") as file:
-                user = json.load(file)
-        except FileNotFoundError:
-            print("User not found.")
-            return
-
-        user["blacklist"].append(id)
-
-        with open(f"./users/{self.master.user}.json", "w") as file:
-            json.dump(user, file)
 
     def add_description(self, label_text, column):
         """Helper function to add a description to the grid."""

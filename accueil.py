@@ -10,7 +10,7 @@ import json
 import random
 
 
-class Accueil(tk.Frame):
+class Accueil(ctk.CTkFrame):
 
     def __init__(self, master=None):
         super().__init__(master)
@@ -18,7 +18,7 @@ class Accueil(tk.Frame):
         self.create_widgets()
         self.liste_genres = []
 
-    # Fonctions qui assure que les recherches sont valides -----------------------------
+    # Fonctions qui assurent que les recherches sont valides -----------------------------
 
     def range_annee(self, entry):
         if not entry.isdigit():
@@ -111,50 +111,27 @@ class Accueil(tk.Frame):
     def Resultat(self, annee_max, annee_min, rating_max, rating_min, desired_genres):
         # Recherche des films parmi la base de données
 
+        blacklist = self.master.user.blacklist
+
         if len(desired_genres) == 0:
             data = bdd[(bdd["startYear"] >= int(annee_min)) & (
-                bdd["startYear"] <= int(annee_max)) & (bdd["averageRating"] <= int(rating_max)) & (bdd["averageRating"] >= int(rating_min))]
+                bdd["startYear"] <= int(annee_max)) & (bdd["averageRating"] <= int(rating_max)) & (bdd["averageRating"] >= int(rating_min)) & ~bdd.index.isin(blacklist)]
 
         else:
             data = bdd[(bdd["genres"].apply(lambda x: any(genre in x for genre in desired_genres))) & (bdd["startYear"] >= int(annee_min)) & (
-                bdd["startYear"] <= int(annee_max)) & (bdd["averageRating"] <= int(rating_max)) & (bdd["averageRating"] >= int(rating_min))]
+                bdd["startYear"] <= int(annee_max)) & (bdd["averageRating"] <= int(rating_max)) & (bdd["averageRating"] >= int(rating_min)) & ~bdd.index.isin(blacklist)]
 
-        try:
-            with open(f"users/{self.master.user}.json") as file:
-
-                blacklist = json.load(file)["blacklist"]
-        except FileNotFoundError:
-            blacklist = []
-
-        liste_des_films = []
-        nombre_de_film = 3
-
-        # si la recherche ne renvoie pas 3 films, on ajoute des films au hasard
+        # si la recherche ne renvoie pas 3 films, on ajoute des films au hasard dans la liste filtrée, jusqu'à ce qu'elle contienne 3
         if len(data) < 3:
-            nombre_de_film = len(data)
-            for i in range(0, 3 - nombre_de_film):
-                trouver = False
-                while (not trouver):
-                    idFilm = bdd.sample(
-                        1, random_state=random.randint(0, 10000)).index[0]
-
-                    if idFilm not in blacklist:
-                        blacklist.append(idFilm)
-                        liste_des_films.append(idFilm)
-                        trouver = True
+            data.append(bdd.sample(3-len(data)))
 
         # si la recherche renvoie plus de 3 films, on ajoute des films au hasard depuis la recherche
-        for i in range(0, nombre_de_film):
-            while (True):
-                idFilm = data.sample(1).index[0]
-                if idFilm not in blacklist:
-                    break
-            blacklist.append(idFilm)
-            liste_des_films.append(idFilm)
-
-        return liste_des_films
+        return data.sample(3).index
 
     def add_genres(self):
+        """
+        Ajoute un genre à la liste parmis laquelle on fait le filtre.
+        """
 
         if self.genres_exist(self.choixGenre.get()):
             self.choixGenre.configure(foreground="red")
@@ -165,7 +142,6 @@ class Accueil(tk.Frame):
 
     # visuel de la recherhe
     def create_widgets(self):
-        self.grid(row=0, column=0, padx=80, pady=20, sticky="nsew")
 
         # Définir la liste des genres avant de l'utiliser
         liste_des_genres = list(genres.value_to_key.keys())
@@ -173,56 +149,62 @@ class Accueil(tk.Frame):
         # Variable pour stocker la sélection
         n = tk.StringVar()
 
+        form_frame = ctk.CTkFrame(self, fg_color="transparent")
+        form_frame.pack(expand=True, fill="both")
+        # form_frame.grid(row=0, column=0, padx=80, pady=20, sticky="nsew")
+
         # Création de labels et entrées pour les années
         self.label_annee_max = ctk.CTkLabel(
-            self, text="Année Max:", text_color="black")
+            form_frame, text="Année Max:", text_color="black")
         self.label_annee_max.grid(row=1, column=0, padx=10, pady=5, sticky="w")
 
-        self.entry_annee_max = ctk.CTkEntry(self, placeholder_text="2000")
+        self.entry_annee_max = ctk.CTkEntry(
+            form_frame, placeholder_text="2000")
         self.entry_annee_max.insert(0, f"{datetime.datetime.now().year}")
         self.entry_annee_max.grid(row=1, column=1, padx=10, pady=5, sticky="w")
 
         self.label_annee_min = ctk.CTkLabel(
-            self, text="Année Min:", text_color="black")
+            form_frame, text="Année Min:", text_color="black")
         self.label_annee_min.grid(row=2, column=0, padx=10, pady=5, sticky="w")
 
-        self.entry_annee_min = ctk.CTkEntry(self, placeholder_text="2000")
+        self.entry_annee_min = ctk.CTkEntry(
+            form_frame, placeholder_text="2000")
         self.entry_annee_min.insert(0, "1900")
         self.entry_annee_min.grid(row=2, column=1, padx=10, pady=5, sticky="w")
 
         # Création de labels et entrées pour les Rating
         self.label_rating_max = ctk.CTkLabel(
-            self, text="Rating Max:", text_color="black")
+            form_frame, text="Rating Max:", text_color="black")
         self.label_rating_max.grid(
             row=1, column=3, padx=10, pady=5, sticky="w")
 
         self.entry_rating_max = ctk.CTkEntry(
-            self, placeholder_text="10")
+            form_frame, placeholder_text="10")
         self.entry_rating_max.insert(0, "10")
         self.entry_rating_max.grid(
             row=1, column=4, padx=10, pady=5, sticky="w")
 
         self.label_rating_min = ctk.CTkLabel(
-            self, text="Rating Min:", text_color="black")
+            form_frame, text="Rating Min:", text_color="black")
         self.label_rating_min.grid(
             row=2, column=3, padx=10, pady=5, sticky="w")
 
-        self.entry_rating_min = ctk.CTkEntry(self, placeholder_text="0")
+        self.entry_rating_min = ctk.CTkEntry(form_frame, placeholder_text="0")
         self.entry_rating_min.insert(0, "0")
         self.entry_rating_min.grid(
             row=2, column=4, padx=10, pady=5, sticky="w")
 
         # Bouton pour collecter les informations
         self.collect_button = ctk.CTkButton(
-            self, text="Collecter",  command=self.collect_info)
+            form_frame, text="Collecter",  command=self.collect_info)
         self.collect_button.grid(row=3, column=3, padx=10, pady=20, sticky="w")
 
-        self.add_Genre = ctk.CTkButton(self, text="ajouter Genre",  command=self.add_genres,
+        self.add_Genre = ctk.CTkButton(form_frame, text="ajouter Genre",  command=self.add_genres,
                                        fg_color="gray", text_color="white", hover_color="black")
         self.add_Genre.grid(row=3, column=1, padx=10, pady=20, sticky="w")
 
         # Création du combobox avec la liste des genres
-        self.choixGenre = ttk.Combobox(self, width=20, textvariable=n)
+        self.choixGenre = ttk.Combobox(form_frame, width=20, textvariable=n)
         self.choixGenre.grid(row=3, column=0, padx=10, pady=5, sticky="w")
         self.choixGenre["values"] = liste_des_genres
         self.choixGenre.set("")  # Valeur spar défaut vide
@@ -245,3 +227,9 @@ class Accueil(tk.Frame):
         # Configuration des colonnes pour s'assurer que chaque colonne a une taille uniforme
         self.grid_columnconfigure(0, weight=1, uniform="group1")
         self.grid_columnconfigure(1, weight=1, uniform="group1")
+
+        # Bouton de gestion de profil
+        user_button = ctk.CTkButton(
+            self, height=30, width=30, text=self.master.user.initials, command=self.master.show_blacklist)
+        user_button.place(
+            anchor="ne", relx=1-20/self.master.winfo_width(), rely=20/self.master.winfo_height())

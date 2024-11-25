@@ -3,6 +3,7 @@ from accueil import Accueil
 from resultat_recherche import ResultatRecherche
 from profiles import Profiles
 from create_user import CreateUser
+from blacklist_manager import BlacklistManager
 
 
 class MainApp(ctk.CTk):
@@ -12,7 +13,7 @@ class MainApp(ctk.CTk):
         self.geometry("1280x720")
         self.show_profiles()
 
-        # Paramètre pour savoir qui utilise l'application
+        # Paramètre, de la classe user, pour savoir qui utilise l'application
         self.user = None
 
     def show_profiles(self):
@@ -47,6 +48,14 @@ class MainApp(ctk.CTk):
         self.clear_main_frame()
         self.create_user = CreateUser(master=self)
         self.create_user.pack(expand=True, fill="both")
+
+    def show_blacklist(self):
+        """
+        Interface pour gérer la blacklist
+        """
+        self.clear_main_frame()
+        self.blacklist_manager = BlacklistManager(master=self)
+        self.blacklist_manager.pack(expand=True, fill="both")
 
     def clear_main_frame(self):
         for widget in self.winfo_children():

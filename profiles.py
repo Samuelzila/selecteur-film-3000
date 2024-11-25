@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import os
 from functools import partial
+from user import User
 
 
 class Profiles(ctk.CTkFrame):
@@ -17,16 +18,16 @@ class Profiles(ctk.CTkFrame):
 
         # Pour chaque utilisateur détecté, on crée une icône de connection
         for nom in liste_noms:
-            # Crée un string d'initiales à partir d'un nom.
-            initiales = "".join([s[0] for s in nom.split(" ")])
+            # Crée un objet user pour chaque utilisateur
+            user = User(nom)
 
             # Groupe pour l'icône et le nom complet
             label_group = ctk.CTkFrame(button_frame, fg_color="transparent")
             # Ajout d'un bouton carré, pour le profil
             icon = ctk.CTkButton(
-                label_group, text=initiales, command=partial(self.select_user, nom), width=75, height=75, font=("Arial", 32, "bold"))
+                label_group, text=user.initials, command=partial(self.select_user, user), width=75, height=75, font=("Arial", 32, "bold"))
             icon.pack()
-            label = ctk.CTkLabel(label_group, text=nom)
+            label = ctk.CTkLabel(label_group, text=user.name)
             label.pack()
             label_group.pack(padx=20, side="left")
 
