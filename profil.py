@@ -15,6 +15,14 @@ class Profil(tk.Frame):
         self.profil_actif = profil_actif
         self.create_widgets()
 
+        #Styyyle
+        ctk.set_appearance_mode("dark")
+
+        style = ttk.Style()
+        style.theme_use("clam")  
+        style.configure("TButton", font=("Helvetica", 12), padding=6)
+
+
     def create_widgets(self):
         
         self.grid(row=0, column=0, padx=80, pady=20, sticky="nsew")
@@ -35,7 +43,8 @@ class Profil(tk.Frame):
         self.choixprofil.bind("<<ComboboxSelected>>", self.update_profil_actif)
 
         # Bouton pour voir les films liké
-        self.likeeee = ctk.CTkButton(self, text="Voir les films liké", command=self.afficherfilmliké)
+        self.likeeee = ctk.CTkButton(self, text="Voir les films liké", command=self.afficherfilmliké
+                                     ,fg_color="#424242", hover_color="#636363",text_color="white")
         self.likeeee.grid(row=9, column=1, padx=10, pady=20, sticky="w")
 
         # Label pour nom
@@ -60,19 +69,23 @@ class Profil(tk.Frame):
         self.entry_age.grid(row=4, column=1, padx=10, pady=5, sticky="w")
         
         # Bouton pour créer un profil
-        self.créer_le_profil = ctk.CTkButton(self, text="Créer le profil",  command=self.créer_le_profil)
+        self.créer_le_profil = ctk.CTkButton(self, text="Créer le profil",  command=self.créer_le_profil
+                                             ,fg_color="#424242", hover_color="#636363",text_color="white")
         self.créer_le_profil.grid(row=5, column=1, padx=10, pady=20, sticky="w")
         
         # Bouton pour supprimer un profil
-        self.destroyy = ctk.CTkButton(self, text="Supprimer le profil",  command=self.destroyprofil)
+        self.destroyy = ctk.CTkButton(self, text="Supprimer le profil",  command=self.destroyprofil
+                                      ,fg_color="#424242", hover_color="#636363",text_color="white")
         self.destroyy.grid(row=7, column=1, padx=10, pady=20, sticky="w")
 
         # Bouton pour afficher les informations associées à un profil
-        self.affiche_info = ctk.CTkButton(self, text="Afficher les informations du profil", command=self.afficher_info_profil)
+        self.affiche_info = ctk.CTkButton(self, text="Afficher les informations du profil", command=self.afficher_info_profil
+                                          ,fg_color="#424242", hover_color="#636363",text_color="white")
         self.affiche_info.grid(row=8, column=1, padx=10, pady=20, sticky="w")
 
-        #Bouton pour continuer
-        self.button = ctk.CTkButton(self, text="Continuer", command=self.goto_accueil)
+        # Bouton pour continuer
+        self.button = ctk.CTkButton(self, text="Continuer", command=self.goto_accueil
+                                    ,fg_color="#424242", hover_color="#636363",text_color="white")
         self.button.grid(row=6, column=1, padx=10, pady=20, sticky="w")  # Utilise grid
 
     def afficherfilmliké(self):
@@ -118,7 +131,7 @@ class Profil(tk.Frame):
         self.profil_actif = selected_profile  # Met à jour profil_actif
         print(f"Profil actif sélectionné: {self.profil_actif}")
 
-    #Met à jour les valeurs de la combobox
+    # Met à jour les valeurs de la combobox
     def update_combobox(self):
         self.choixprofil["values"] = [profil["nom"] for profil in self.liste_profil]
 
@@ -202,4 +215,8 @@ class Profil(tk.Frame):
                         profil['films_likés'] = []  # Initialise avec une liste vide si absent
                 return profils
         return []
+    
+    
+
+    
 
