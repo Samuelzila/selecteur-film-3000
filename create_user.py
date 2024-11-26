@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import os
 import json
+from user import User
 
 
 class CreateUser(ctk.CTkFrame):
@@ -28,21 +29,7 @@ class CreateUser(ctk.CTkFrame):
         nom = self.name_entry.get()
 
         # Création de l'utilisateur
-
-        # Création d'un dossier d'utilisateurs.
-        chemin_dossier = "./users/"
-        if not os.path.exists(chemin_dossier):
-            os.makedirs(chemin_dossier)
-
-        # Objet utilisateur
-        user = {
-            "name": nom,
-            "blacklist": []
-        }
-
-        # Écriture des données dans un fichier
-        with open(chemin_dossier+nom+".json", "w", encoding="utf-8") as file:
-            file.write(json.dumps(user))
+        User.create_user(nom)
 
         # Retour à l'accueil
         self.master.show_profiles()

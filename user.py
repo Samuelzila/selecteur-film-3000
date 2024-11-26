@@ -1,4 +1,5 @@
 import json
+import os
 
 
 class User:
@@ -59,6 +60,44 @@ class User:
         try:
             with open(f"./users/{self.name}.json", "w") as file:
                 file.write(json.dumps(data))
+            return True
+        except Exception:
+            return False
+
+    @staticmethod
+    def create_user(name):
+        """
+        Création d'un utilisateur.
+        Retourne False en cas d'échec.
+        """
+        try:
+            # Création d'un dossier d'utilisateurs.
+            chemin_dossier = "./users/"
+            if not os.path.exists(chemin_dossier):
+                os.makedirs(chemin_dossier)
+
+            # Objet utilisateur
+            user = {
+                "name": name,
+                "blacklist": []
+            }
+
+            # Écriture des données dans un fichier
+            with open(chemin_dossier+name+".json", "w", encoding="utf-8") as file:
+                file.write(json.dumps(user))
+
+            return True
+        except Exception:
+            return False
+
+    @staticmethod
+    def remove_user(name):
+        """
+        Supprime un utilisateur.
+        Retourne False en cas d'échec.
+        """
+        try:
+            os.remove(f"./users/{name}.json")
             return True
         except Exception:
             return False
