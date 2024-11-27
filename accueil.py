@@ -22,8 +22,6 @@ class Accueil(ctk.CTkFrame):
     # Fonctions qui assurent que les recherches sont valides -----------------------------
 
     def range_annee(self, entry):
-        if not entry.isdigit():
-            return True
         if int(entry) < 1900 or int(entry) > datetime.datetime.now().year + 5:
             return True
 
@@ -34,8 +32,6 @@ class Accueil(ctk.CTkFrame):
             return False
 
     def range_rating(self, entry):
-        if not entry.isdigit():
-            return True
         if int(entry) < 0 or int(entry) > 10:
             return True
 
@@ -208,7 +204,7 @@ class Accueil(ctk.CTkFrame):
 
         # Frame pour contenir le formulaire
         form_frame = ctk.CTkFrame(self, fg_color="transparent")
-        form_frame.pack(expand=True, fill="both")
+        form_frame.place(anchor="n", relx=.5, rely=.2)
 
         # Création de labels et entrées pour les années
         self.label_annee_max = ctk.CTkLabel(
@@ -255,7 +251,7 @@ class Accueil(ctk.CTkFrame):
         # Bouton pour collecter les informations
         self.collect_button = ctk.CTkButton(
             form_frame, text="Envoyer",  command=self.collect_info)
-        self.collect_button.grid(row=3, column=3, padx=10, pady=20, sticky="w")
+        self.collect_button.grid(row=3, column=4, padx=10, pady=20, sticky="e")
 
         # Gérer les genres
         self.add_Genre = ctk.CTkButton(form_frame, text="ajouter Genre",  command=self.add_genres,
