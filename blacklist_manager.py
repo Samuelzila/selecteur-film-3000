@@ -1,9 +1,8 @@
 import customtkinter as ctk
-import os
 from functools import partial
-import json
 import bdd
 from user import User
+from tkinter.messagebox import askokcancel
 
 
 class BlacklistManager(ctk.CTkFrame):
@@ -44,7 +43,7 @@ class BlacklistManager(ctk.CTkFrame):
 
         # Bouton pour supprimmer l'utilisateur
         delete_user = ctk.CTkButton(
-            self.master, text="Supprimer l'utilisateur", command=self.remove_user, fg_color="#af0000")
+            self.master, text="Supprimer l'utilisateur", command=self.remove_user, fg_color="#af0000", hover_color="#5f0000")
         delete_user.place(anchor="se", relx=1-20/self.master.winfo_width(),
                           rely=1-30/self.master.winfo_height())
 
@@ -53,6 +52,9 @@ class BlacklistManager(ctk.CTkFrame):
         self.master.show_blacklist()
 
     def remove_user(self):
-        User.remove_user(self.master.user.name)
-        self.master.user = None
-        self.master.show_profiles()
+        answer = askokcancel(
+            message="Voulez-vous vraiment supprimer votre profil ?")
+        if answer:
+            User.remove_user(self.master.user.name)
+            self.master.user = None
+            self.master.show_profiles()
