@@ -1,3 +1,5 @@
+import random
+import json
 import customtkinter as ctk
 import tkinter as tk
 from tkinter import ttk
@@ -7,9 +9,6 @@ from bdd import genres
 import datetime
 import pandas as pd
 from functools import partial
-
-import json
-import random
 
 
 class Accueil(ctk.CTkFrame):
@@ -167,6 +166,38 @@ class Accueil(ctk.CTkFrame):
         # Mettre à jour l'interface
         self.refresh_genres()
 
+    def refresh_year_sliders(self, value):
+        """
+        Met à jour les nombres pour les sliders d'année, et synchronise les extremums.
+        """
+        # S'assurer que le minimum est inférieur au max et vice-versa
+        if value < self.entry_annee_min.get():
+            self.entry_annee_min.set(value)
+        elif value > self.entry_annee_max.get():
+            self.entry_annee_max.set(value)
+
+        # Mettre à jour les labels
+        self.label_annee_max.configure(
+            text=f"Année maximale: {self.entry_annee_max.get():.0f}")
+        self.label_annee_min.configure(
+            text=f"Année minimale: {self.entry_annee_min.get():.0f}")
+
+    def refresh_rating_sliders(self, value):
+        """
+        Met à jour les nombres pour les sliders de score, et synchronise les extremums.
+        """
+        # S'assurer que le minimum est inférieur au max et vice-versa
+        if value < self.entry_rating_min.get():
+            self.entry_rating_min.set(value)
+        elif value > self.entry_rating_max.get():
+            self.entry_rating_max.set(value)
+
+        # Mettre à jour les labels
+        self.label_rating_max.configure(
+            text=f"Score maximal: {self.entry_rating_max.get():.1f}")
+        self.label_rating_min.configure(
+            text=f"Score minimal: {self.entry_rating_min.get():.1f}")
+
     def create_widgets(self):
 
         # Définir la liste des genres avant de l'utiliser
@@ -181,42 +212,43 @@ class Accueil(ctk.CTkFrame):
 
         # Création de labels et entrées pour les années
         self.label_annee_max = ctk.CTkLabel(
-            form_frame, text="Année Max:", text_color="black")
+            form_frame, text=f"Année maximale: {datetime.datetime.now().year}")
         self.label_annee_max.grid(row=1, column=0, padx=10, pady=5, sticky="w")
 
-        self.entry_annee_max = ctk.CTkEntry(
-            form_frame, placeholder_text="2000")
-        self.entry_annee_max.insert(0, f"{datetime.datetime.now().year}")
+        self.entry_annee_max = ctk.CTkSlider(
+            form_frame, from_=1900, to=datetime.datetime.now().year, command=self.refresh_year_sliders)
+        self.entry_annee_max.set(datetime.datetime.now().year)
         self.entry_annee_max.grid(row=1, column=1, padx=10, pady=5, sticky="w")
 
         self.label_annee_min = ctk.CTkLabel(
-            form_frame, text="Année Min:", text_color="black")
+            form_frame, text="Année minimale: 1900")
         self.label_annee_min.grid(row=2, column=0, padx=10, pady=5, sticky="w")
 
-        self.entry_annee_min = ctk.CTkEntry(
-            form_frame, placeholder_text="2000")
-        self.entry_annee_min.insert(0, "1900")
+        self.entry_annee_min = ctk.CTkSlider(
+            form_frame, from_=1900, to=datetime.datetime.now().year, command=self.refresh_year_sliders)
+        self.entry_annee_min.set(1900)
         self.entry_annee_min.grid(row=2, column=1, padx=10, pady=5, sticky="w")
 
         # Création de labels et entrées pour les Rating
         self.label_rating_max = ctk.CTkLabel(
-            form_frame, text="Rating Max:", text_color="black")
+            form_frame, text="Score maximal: 10.0")
         self.label_rating_max.grid(
             row=1, column=3, padx=10, pady=5, sticky="w")
 
-        self.entry_rating_max = ctk.CTkEntry(
-            form_frame, placeholder_text="10")
-        self.entry_rating_max.insert(0, "10")
+        self.entry_rating_max = ctk.CTkSlider(
+            form_frame, from_=0, to=10, command=self.refresh_rating_sliders)
+        self.entry_rating_max.set(10)
         self.entry_rating_max.grid(
             row=1, column=4, padx=10, pady=5, sticky="w")
 
         self.label_rating_min = ctk.CTkLabel(
-            form_frame, text="Rating Min:", text_color="black")
+            form_frame, text="Score minimal: 0.0")
         self.label_rating_min.grid(
             row=2, column=3, padx=10, pady=5, sticky="w")
 
-        self.entry_rating_min = ctk.CTkEntry(form_frame, placeholder_text="0")
-        self.entry_rating_min.insert(0, "0")
+        self.entry_rating_min = ctk.CTkSlider(
+            form_frame, from_=0, to=10, command=self.refresh_rating_sliders)
+        self.entry_rating_min.set(0)
         self.entry_rating_min.grid(
             row=2, column=4, padx=10, pady=5, sticky="w")
 
