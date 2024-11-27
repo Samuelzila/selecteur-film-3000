@@ -5,6 +5,8 @@ import bdd as BDD
 from bdd import bdd
 from bdd import genres
 import datetime
+import pandas as pd
+from functools import partial
 
 import json
 import random
@@ -122,36 +124,60 @@ class Accueil(ctk.CTkFrame):
                 bdd["startYear"] <= int(annee_max)) & (bdd["averageRating"] <= int(rating_max)) & (bdd["averageRating"] >= int(rating_min)) & ~bdd.index.isin(blacklist)]
 
         # si la recherche ne renvoie pas 3 films, on ajoute des films au hasard dans la liste filtrée, jusqu'à ce qu'elle contienne 3
-        if len(data) < 3:
-            data.append(bdd.sample(3-len(data)))
+        if len(data.index) < 3:
+            data = pd.concat([data, bdd.sample(3-len(data.index))])
 
         # si la recherche renvoie plus de 3 films, on ajoute des films au hasard depuis la recherche
         return data.sample(3).index
+
+    def refresh_genres(self):
+        """
+        Met à jour les genres sélectionnés dans l'interface graphique.
+        """
+        for child in self.liste_genres_frame.winfo_children():
+            child.destroy()
+        for i, genre in enumerate(self.liste_genres):
+            label = ctk.CTkLabel(self.liste_genres_frame,
+                                 text=BDD.genre_decode(genre))
+            label.grid(row=i, column=0, pady=5, padx=10, sticky="w")
+            # Supprimer une sélection en cliquant dessus.
+            label.bind("<Button-1>", partial(self.remove_genre, genre))
 
     def add_genres(self):
         """
         Ajoute un genre à la liste parmis laquelle on fait le filtre.
         """
 
-        if self.genres_exist(self.choixGenre.get()):
+        genre = self.choixGenre.get()
+        if self.genres_exist(genre) or BDD.genre_encode(genre) in self.liste_genres:
             self.choixGenre.configure(foreground="red")
         else:
             self.choixGenre.configure(foreground="green")
             self.liste_genres.append(BDD.genre_encode(self.choixGenre.get()))
             self.choixGenre.set("")
 
-    # visuel de la recherhe
+        # Mettre à jour l'interface graphique
+        self.refresh_genres()
+
+    def remove_genre(self, genre, event):
+        """
+        Retire un genre de la liste des genres sélectionnés
+        """
+        self.liste_genres.remove(genre)
+        # Mettre à jour l'interface
+        self.refresh_genres()
+
     def create_widgets(self):
 
         # Définir la liste des genres avant de l'utiliser
         liste_des_genres = list(genres.value_to_key.keys())
 
         # Variable pour stocker la sélection
-        n = tk.StringVar()
+        genre_input = tk.StringVar()
 
+        # Frame pour contenir le formulaire
         form_frame = ctk.CTkFrame(self, fg_color="transparent")
         form_frame.pack(expand=True, fill="both")
-        # form_frame.grid(row=0, column=0, padx=80, pady=20, sticky="nsew")
 
         # Création de labels et entrées pour les années
         self.label_annee_max = ctk.CTkLabel(
@@ -196,15 +222,17 @@ class Accueil(ctk.CTkFrame):
 
         # Bouton pour collecter les informations
         self.collect_button = ctk.CTkButton(
-            form_frame, text="Collecter",  command=self.collect_info)
+            form_frame, text="Envoyer",  command=self.collect_info)
         self.collect_button.grid(row=3, column=3, padx=10, pady=20, sticky="w")
 
+        # Gérer les genres
         self.add_Genre = ctk.CTkButton(form_frame, text="ajouter Genre",  command=self.add_genres,
                                        fg_color="gray", text_color="white", hover_color="black")
         self.add_Genre.grid(row=3, column=1, padx=10, pady=20, sticky="w")
 
         # Création du combobox avec la liste des genres
-        self.choixGenre = ttk.Combobox(form_frame, width=20, textvariable=n)
+        self.choixGenre = ttk.Combobox(
+            form_frame, width=20, textvariable=genre_input)
         self.choixGenre.grid(row=3, column=0, padx=10, pady=5, sticky="w")
         self.choixGenre["values"] = liste_des_genres
         self.choixGenre.set("")  # Valeur spar défaut vide
@@ -227,6 +255,12 @@ class Accueil(ctk.CTkFrame):
         # Configuration des colonnes pour s'assurer que chaque colonne a une taille uniforme
         self.grid_columnconfigure(0, weight=1, uniform="group1")
         self.grid_columnconfigure(1, weight=1, uniform="group1")
+
+        # Afficher une liste des genres séléctionnés
+        self.liste_genres_frame = ctk.CTkFrame(
+            form_frame, fg_color="transparent")
+        self.liste_genres_frame.grid(
+            row=4, column=0, pady=5, padx=10, sticky="nw")
 
         # Bouton de gestion de profil
         user_button = ctk.CTkButton(
