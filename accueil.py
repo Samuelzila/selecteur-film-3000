@@ -132,11 +132,29 @@ class Accueil(ctk.CTkFrame):
             data = bdd[(bdd["startYear"] >= int(annee_min)) & (
                 bdd["startYear"] <= int(annee_max)) & (bdd["averageRating"] <= int(rating_max)) & (bdd["averageRating"] >= int(rating_min))& (bdd["averageRating"] >= int(rating_min)) & (bdd["runtimeMinutes"] <= int(duration_max)) & (bdd["runtimeMinutes"] >= int(duration_min))]
 
-        else:
+        if self.var.get():
             print(" duration max : ",int(duration_max), int(duration_min))
-            data = bdd[(bdd["genres"].apply(lambda x: any(genre in x for genre in desired_genres))) & (bdd["startYear"] >= int(annee_min))
-                        & (bdd["startYear"] <= int(annee_max)) & (bdd["averageRating"] <= int(rating_max)) & (bdd["averageRating"] >= int(rating_min)) & (bdd["runtimeMinutes"] <= int(duration_max)) & (bdd["runtimeMinutes"] >= int(duration_min))]
+            data = bdd[
+                (bdd["genres"].apply(lambda x: all(genre in x for genre in desired_genres)))
+                & (bdd["startYear"] >= int(annee_min))
+                & (bdd["startYear"] <= int(annee_max))
+                & (bdd["averageRating"] <= int(rating_max))
+                & (bdd["averageRating"] >= int(rating_min))
+                & (bdd["runtimeMinutes"] <= int(duration_max))
+                & (bdd["runtimeMinutes"] >= int(duration_min))
+            ]
+        else:
+            data = bdd[
+                (bdd["genres"].apply(lambda x: any(genre in x for genre in desired_genres)))
+                & (bdd["startYear"] >= int(annee_min))
+                & (bdd["startYear"] <= int(annee_max))
+                & (bdd["averageRating"] <= int(rating_max))
+                & (bdd["averageRating"] >= int(rating_min))
+                & (bdd["runtimeMinutes"] <= int(duration_max))
+                & (bdd["runtimeMinutes"] >= int(duration_min))
+            ]
 
+            
         try:
             with open("data/blacklist.json") as file:
 
@@ -229,7 +247,7 @@ class Accueil(ctk.CTkFrame):
 
 
         # Titre
-        self.Titre = ctk.CTkLabel(self, text="Sélecteur-Film-3000", text_color="white", font=("Arial", 30, "bold"), justify="center")
+        self.Titre = ctk.CTkLabel(self, text="Sélecteur-Film-3000", font=("Arial", 30, "bold"), justify="center", text_color = BUTTON_COLOR)
         self.Titre.place(relx=0.5, rely=0.05, anchor="center")
 
         # Plage années
@@ -293,7 +311,7 @@ class Accueil(ctk.CTkFrame):
             fg_color="transparent",
             justify="left"
         )
-        self.ajout_de_genre.place(relx=0.25, rely=0.6, anchor="center")
+        self.ajout_de_genre.place(relx=0.25, rely=0.65, anchor="center")
 
         # Bouton pour supprimer un genre
         self.supprimer_genre_button = CTkListbox(
@@ -310,10 +328,17 @@ class Accueil(ctk.CTkFrame):
             justify="left",
             #scrollbar_button_color="#4f574f"
         )
-        self.supprimer_genre_button.place(relx=0.40, rely=0.6, anchor="center")
+        self.supprimer_genre_button.place(relx=0.40, rely=0.65, anchor="center")
 
 
-    
+        self.var = tk.BooleanVar()  # Peut prendre les valeurs True ou False
+
+        # Ajouter une case à cocher
+        self.checkbox_label = tk.Label(self, text="Genre spécifique", font=("Arial", 12), background="#4f574f", fg="white")
+        self.checkbox = tk.Checkbutton(self, variable=self.var, onvalue=True, offvalue=False, width=2, height=1, indicatoron=False , fg="black", bg="#4f574f", activebackground="#4f574f", activeforeground="white")
+        self.checkbox_label.place(relx=0.65, rely=0.7, relwidth=0.2)
+        self.checkbox.place(relx=0.60, rely=0.7, relwidth=0.05 )
+
 
         # Supprimer bouton (placeholder exemple)
         
@@ -414,3 +439,12 @@ class Accueil(ctk.CTkFrame):
             self.supprimer_genre_button.delete(index)
             print("liste des genres", self.liste_genres)  # delete the last item
             #Bug mais ça marche lol
+    
+    def update_color(self):
+        """Change the background color based on the checkbox state."""
+        
+        if self.var.get():  # If checked
+            self.checkbox.config(fg=BUTTON_COLOR)
+            print("checked")
+        else:  # If unchecked
+             self.checkbox.config(bg=COLOR_WHITE)
