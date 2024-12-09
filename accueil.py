@@ -10,10 +10,7 @@ import json
 import random
 from ttkwidgets import TickScale
 
-#TODO: ajouter sélection biaisé 
-#TODO: ajouter genre sélectif
-
-#ajout de CTkFrame pour changer l'apparance
+#
 BACKGROUND_COLOR = "#2b2b2b"
 
 BUTTON_COLOR = "#FCC398"
@@ -44,25 +41,25 @@ class Accueil(ctk.CTkFrame):
         # Collecte des informations entrées par l'utilisateur
         annee_max = self.max_slider.get()
         annee_min = self.min_slider.get()
-        rating_max = self.max_slider_rating.get()/10
+        rating_max = self.max_slider_rating.get()/10 #dvisier par 10 car le slider est sur 100 et le rating sur 10
         rating_min = self.min_slider_rating.get()/10
         duration_max = self.max_slider_temps.get()
         duration_min = self.min_slider_temps.get()
-        print("duration max : ", duration_max, "duration min : ", duration_min)
+
         genre = self.liste_genres      
-         # Changer de fenêtre
+        # Changer de fenêtre
         self.master.show_Films(tuple(self.Resultat(annee_max, annee_min, rating_max, rating_min, genre, duration_max, duration_min)))
 
     def Resultat(self, annee_max, annee_min, rating_max, rating_min, desired_genres, duration_max, duration_min):
         # Recherche des films parmi la base de données
 
-        #variables utiles
+        #variables utiles/ paramètres
         liste_des_films = []
         rating_liste = []
         nombre_de_film = 3
 
 
-        #genre vide
+        #si aucun genre est sélectionné
         if len(desired_genres) == 0:
             data = bdd[
                 (bdd["startYear"] >= int(annee_min))
@@ -98,7 +95,8 @@ class Accueil(ctk.CTkFrame):
                 & (bdd["runtimeMinutes"] >= int(duration_min))
             ]
 
-            
+
+        # Chargement de la blacklist
         try:
             with open("data/blacklist.json") as file:
 
@@ -122,26 +120,26 @@ class Accueil(ctk.CTkFrame):
                         liste_des_films.append(idFilm)
                         trouver = True
 
-        # si la recherche renvoie plus de 3 films, on ajoute des films au hasard depuis la recherche
+
+        # si la recherche renvoie plus de 9 films, on ajoute des films au hasard, mais biaisé pour que le rating soit plus élevé
         if len(data) > nombre_de_film*3:
-            print(nombre_de_film)
+            print("nombre de film : ", nombre_de_film)
             for i in range(0, nombre_de_film*3):
                 while (True):
                     idFilm = data.sample(1)
                     rating_liste.append([idFilm["averageRating"].values[0], idFilm.index[0]])
                     if idFilm not in blacklist:
                         break
-            print(rating_liste)
             rating_liste.sort(reverse=True)
-            print(rating_liste)
+            # on ajoute les 3 meilleurs films
             for i in range(0, 3):
                 liste_des_films.append(rating_liste[i][1])
-                print(liste_des_films)
                 blacklist.append(rating_liste[i][1])
         
+        #si la recherche renvoie moins de 9 films, on ajoute des films au hasard
         else:
             print(nombre_de_film)
-            for i in range(0, nombre_de_film*10):
+            for i in range(0, nombre_de_film):
                 while (True):
                     idFilm = data.sample(1).index[0]
                     if idFilm not in blacklist:
@@ -151,10 +149,10 @@ class Accueil(ctk.CTkFrame):
         
         return liste_des_films
 
-    
-    # visuel de la recherhe
+
 
     
+    # visuel de la recherhe
     def create_widgets(self):
 
         ctk.set_appearance_mode("dark")
@@ -257,18 +255,18 @@ class Accueil(ctk.CTkFrame):
             border_width=0,
             fg_color="transparent",
             justify="left",
-            #scrollbar_button_color="#4f574f"
+    
         )
         self.supprimer_genre_button.place(relx=0.40, rely=0.65, anchor="center")
-
+        
 
         self.var = tk.BooleanVar()  # Peut prendre les valeurs True ou False
 
         # Ajouter une case à cocher
-        self.checkbox_label = tk.Label(self, text="Genre spécifique", font=("Arial", 12), background="#4f574f", fg="white")
-        self.checkbox = tk.Checkbutton(self, variable=self.var, onvalue=True, offvalue=False, width=2, height=1, indicatoron=False , fg="black", bg="#4f574f", activebackground="#4f574f", activeforeground="white")
-        self.checkbox_label.place(relx=0.65, rely=0.7, relwidth=0.2)
-        self.checkbox.place(relx=0.60, rely=0.7, relwidth=0.05 )
+        self.checkbox_label = tk.Label(self, text="Genre spécifique", font=("Arial", 12), background=BACKGROUND_COLOR, fg=COLOR_WHITE)
+        self.checkbox = tk.Checkbutton(self, variable=self.var, onvalue=True, offvalue=False, width=2, height=1, indicatoron=False , fg="black", bg="#4f574f", activebackground=BACKGROUND_COLOR, activeforeground=COLOR_WHITE)
+        self.checkbox_label.place(relx=0.68, rely=0.7, relwidth=0.2)
+        self.checkbox.place(relx=0.64, rely=0.7, relwidth=0.05 )
 
 
     ######### Update Slider ############
@@ -322,36 +320,30 @@ class Accueil(ctk.CTkFrame):
         if selection:
             index = selection[0]
             value = self.ajout_de_genre.get(index)
-            print("liste des genres", self.liste_genres)
-            print("value to remove", value)
-            print("decoded value", BDD.genre_encode(value))
             self.ajout_de_genre.delete(index)
             decoded_value = BDD.genre_encode(value)
+
             if decoded_value in self.liste_genres:
                 print("decoded value found in liste_genres")
                 self.liste_genres.remove(decoded_value)
             else:
                 print("decoded value not found in liste_genres")
-            self.supprimer_genre_button.delete(index)
-            print("liste des genres", self.liste_genres)  # delete the last item
-            #Bug mais ça marche lol
+            
+            self.after(100, lambda: self.supprimer_genre_button.delete(index))
+            #prévention d'un bug de suppression
 
     # Ajouter un genre
     def add_genres(self):
-
-        if self.genres_exist(self.choixGenre.get() or self.choixGenre.get() in self.liste_genres):
+        #tester si le genre existe + s'il est deja ajouté
+        if self.genres_exist(self.choixGenre.get()) or (BDD.genre_encode(self.choixGenre.get()) in self.liste_genres):
             print("mauvaise entrée")
             self.choixGenre.configure(foreground="red")
         else:
             self.choixGenre.configure(foreground="green")
             self.liste_genres.append(BDD.genre_encode(self.choixGenre.get()))
-            print(self.choixGenre.get())
-            print(BDD.genre_encode(self.choixGenre.get()))
-            print(self.liste_genres)
             self.ajout_de_genre.insert(ctk.END, self.choixGenre.get())
             self.choixGenre.set("")
             self.supprimer_genre_button.insert(ctk.END, "X")
-            #self.entry_genre.delete(0, tk.END)
     
     # Fonction de recherche
 
@@ -372,4 +364,5 @@ class Accueil(ctk.CTkFrame):
             return True
         else:
             return False
+        
 
